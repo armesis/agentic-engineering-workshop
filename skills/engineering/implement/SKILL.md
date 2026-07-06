@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit+push together and close only with explicit user go-ahead, proposing a skill refinement afterward if a better way surfaced.
+description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit+push+close together with one explicit user go-ahead, proposing a skill refinement afterward if a better way surfaced.
 disable-model-invocation: true
 ---
 
@@ -38,19 +38,16 @@ Typechecking and unit tests confirm correctness, not that the feature works. Bef
 
 Use /code-review to review the work before considering it done.
 
-### 8. Confirm before committing and pushing
+### 8. Confirm before committing, pushing, and closing
 
-Committing and pushing both touch shared repo state — use AskUserQuestion (or equivalent) once to confirm the user wants to commit and push now. Don't assume permission carries across turns.
+Committing, pushing, and closing the issue all touch shared repo/tracker state — use AskUserQuestion (or equivalent) once to confirm the user wants to commit, push, and close the issue now. Don't assume permission carries across turns, and don't make closing a separate follow-up prompt — it's covered by this same confirmation unless the user says otherwise (e.g. they want to hold off on closing).
 
 Once confirmed:
 
 - Commit with a message referencing the issue number, using the repo's normal format (heredoc-style multiline message, trailers as conventionally used in this repo).
 - Push: `git push`.
+- Close: `gh issue close <number> --comment "..."`, referencing the commit SHA and summarizing what was implemented against the acceptance criteria.
 
-### 9. Close the issue only when explicitly asked
+### 9. Propose a skill refinement, if warranted
 
-Closing the issue is a separate checkpoint from commit/push, not bundled into the same confirmation. When the user asks for it: `gh issue close <number> --comment "..."`, referencing the commit SHA and summarizing what was implemented against the acceptance criteria.
-
-### 10. Propose a skill refinement, if warranted
-
-After pushing, reflect on whether anything in steps 1-9 turned out to be wrong, missing, or clumsy for this repo/issue — a step that didn't fit, a better sequencing, a gap the docs didn't cover. If so, propose a concrete edit to this SKILL.md to the user before ending the turn. Don't propose a refinement just to have one; skip this step if nothing genuinely better surfaced.
+After closing, reflect on whether anything in steps 1-8 turned out to be wrong, missing, or clumsy for this repo/issue — a step that didn't fit, a better sequencing, a gap the docs didn't cover. If so, propose a concrete edit to this SKILL.md to the user before ending the turn. Don't propose a refinement just to have one; skip this step if nothing genuinely better surfaced.
