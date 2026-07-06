@@ -1,21 +1,32 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { networkInterfaces } from "node:os";
+import { createSocket } from "node:dgram";
 import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
 
-function getLanAddress(): string {
-  for (const entries of Object.values(networkInterfaces())) {
-    for (const entry of entries ?? []) {
-      if (entry.family === "IPv4" && !entry.internal) {
-        return entry.address;
-      }
-    }
-  }
-  return "localhost";
+// A machine can have several non-internal IPv4 interfaces at once (VirtualBox
+// host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
+// those are reachable from a Player's phone on the same Wi-Fi. Rather than
+// guess by interface name, ask the OS routing table which local address it
+// would use to reach the internet - that's the adapter actually bridged to
+// the router, so it resolves to the real Wi-Fi/Ethernet adapter.
+// This opens no real connection; UDP "connect" just performs a route lookup.
+function getLanAddress(): Promise<string> {
+  return new Promise((resolve) => {
+    const socket = createSocket("udp4");
+    socket.once("error", () => {
+      socket.close();
+      resolve("localhost");
+    });
+    socket.connect(80, "8.8.8.8", () => {
+      const address = socket.address().address;
+      socket.close();
+      resolve(address);
+    });
+  });
 }
 
 try {
@@ -31,8 +42,8 @@ const hostPassword = process.env.HOST_PASSWORD;
 const app = express();
 app.use(express.json());
 
-app.get("/api/network-info", (_req, res) => {
-  res.json({ host: getLanAddress() });
+app.get("/api/network-info", async (_req, res) => {
+  res.json({ host: await getLanAddress() });
 });
 
 app.post("/api/host/login", (req, res) => {
