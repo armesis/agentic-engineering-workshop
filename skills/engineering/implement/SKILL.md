@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit/push/close only with explicit user go-ahead at each step, proposing a skill refinement afterward if a better way surfaced.
+description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit+push together and close only with explicit user go-ahead, proposing a skill refinement afterward if a better way surfaced.
 disable-model-invocation: true
 ---
 
@@ -38,18 +38,18 @@ Typechecking and unit tests confirm correctness, not that the feature works. Bui
 
 Use /code-review to review the work before considering it done.
 
-### 8. Confirm before committing
+### 8. Confirm before committing and pushing
 
-Committing touches shared repo state — use AskUserQuestion (or equivalent) to confirm the user wants to commit now. Don't assume permission carries across turns.
+Committing and pushing both touch shared repo state — use AskUserQuestion (or equivalent) once to confirm the user wants to commit and push now. Don't assume permission carries across turns.
 
-Commit with a message referencing the issue number, using the repo's normal format (heredoc-style multiline message, trailers as conventionally used in this repo).
+Once confirmed:
 
-### 9. Push and close only when explicitly asked
-
-Pushing and closing the issue are separate checkpoints from committing, not bundled into the same step. When the user asks for either:
-
+- Commit with a message referencing the issue number, using the repo's normal format (heredoc-style multiline message, trailers as conventionally used in this repo).
 - Push: `git push`.
-- Close: `gh issue close <number> --comment "..."`, referencing the commit SHA and summarizing what was implemented against the acceptance criteria.
+
+### 9. Close the issue only when explicitly asked
+
+Closing the issue is a separate checkpoint from commit/push, not bundled into the same confirmation. When the user asks for it: `gh issue close <number> --comment "..."`, referencing the commit SHA and summarizing what was implemented against the acceptance criteria.
 
 ### 10. Propose a skill refinement, if warranted
 
