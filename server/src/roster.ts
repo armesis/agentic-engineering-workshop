@@ -8,6 +8,8 @@ export type JoinResult =
   | { ok: true; player: Player }
   | { ok: false; error: string };
 
+export type RejoinResult = { ok: true; player: Player } | { ok: false };
+
 export function joinRoster(
   roster: Player[],
   candidate: { id: string; username: string; avatar: string },
@@ -26,4 +28,9 @@ export function joinRoster(
   }
 
   return { ok: true, player: { id: candidate.id, username, avatar } };
+}
+
+export function reattachPlayer(roster: Player[], id: string): RejoinResult {
+  const player = roster.find((p) => p.id === id);
+  return player ? { ok: true, player } : { ok: false };
 }

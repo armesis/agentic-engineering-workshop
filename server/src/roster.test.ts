@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { joinRoster, type Player } from "./roster.js";
+import { joinRoster, reattachPlayer, type Player } from "./roster.js";
 
 describe("joinRoster", () => {
   it("admits a Player with a unique username", () => {
@@ -42,5 +42,27 @@ describe("joinRoster", () => {
       ok: true,
       player: { id: "a", username: "Ahmed", avatar: "🦁" },
     });
+  });
+});
+
+describe("reattachPlayer", () => {
+  it("reattaches a Player whose id is still on the roster", () => {
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const result = reattachPlayer(roster, "a");
+    expect(result).toEqual({
+      ok: true,
+      player: { id: "a", username: "Ahmed", avatar: "🦁" },
+    });
+  });
+
+  it("declines to reattach an id that isn't on the roster", () => {
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const result = reattachPlayer(roster, "unknown-id");
+    expect(result).toEqual({ ok: false });
+  });
+
+  it("declines to reattach against an empty roster (e.g. after a server restart)", () => {
+    const result = reattachPlayer([], "a");
+    expect(result).toEqual({ ok: false });
   });
 });

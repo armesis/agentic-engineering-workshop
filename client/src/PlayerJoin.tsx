@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { socket } from './socket'
+import { savePlayerIdentity } from './playerIdentity'
 import type { JoinResult, Player } from './types'
 
 // No designed Avatar set exists yet; fall back to a preset emoji grid (see CONTEXT.md: Avatar).
@@ -23,6 +24,7 @@ function PlayerJoin({ onSuccess }: PlayerJoinProps) {
     socket.emit('player:join', { username, avatar }, (result: JoinResult) => {
       setSubmitting(false)
       if (result.ok) {
+        savePlayerIdentity(result.player)
         onSuccess(result.player)
         return
       }

@@ -1,9 +1,22 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
+import { networkInterfaces } from "node:os";
 import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
-import { joinRoster, type Player } from "./roster.js";
+import { joinRoster, reattachPlayer, type Player } from "./roster.js";
+
+function getLanAddress(): string {
+  for (const entries of Object.values(networkInterfaces())) {
+    for (const entry of entries ?? []) {
+      if (entry.family === "IPv4" && !entry.internal) {
+        return entry.address;
+      }
+    }
+  }
+  return "localhost";
+}
 
 try {
   // Optional in production, where HOST_PASSWORD is expected to already be set in the environment.
@@ -17,6 +30,10 @@ const hostPassword = process.env.HOST_PASSWORD;
 
 const app = express();
 app.use(express.json());
+
+app.get("/api/network-info", (_req, res) => {
+  res.json({ host: getLanAddress() });
+});
 
 app.post("/api/host/login", (req, res) => {
   const { password } = req.body ?? {};
@@ -47,7 +64,7 @@ io.on("connection", (socket) => {
       candidate: { username: string; avatar: string },
       ack?: (result: ReturnType<typeof joinRoster>) => void,
     ) => {
-      const result = joinRoster(roster, { id: socket.id, ...candidate });
+      const result = joinRoster(roster, { id: randomUUID(), ...candidate });
       if (result.ok) {
         roster = [...roster, result.player];
         io.emit("roster:update", roster);
@@ -56,13 +73,19 @@ io.on("connection", (socket) => {
     },
   );
 
+  socket.on(
+    "player:rejoin",
+    (
+      identity: { id: string },
+      ack?: (result: ReturnType<typeof reattachPlayer>) => void,
+    ) => {
+      ack?.(reattachPlayer(roster, identity?.id));
+    },
+  );
+
   socket.on("disconnect", () => {
     console.log(`Socket disconnected: ${socket.id}`);
-    const remaining = roster.filter((p) => p.id !== socket.id);
-    if (remaining.length !== roster.length) {
-      roster = remaining;
-      io.emit("roster:update", roster);
-    }
+    // Roster entries persist across disconnects so a refresh can reattach via localStorage.
   });
 });
 

@@ -5,3 +5,4 @@ export interface Player {
 }
 
 export type JoinResult = { ok: true; player: Player } | { ok: false; error: string }
+export type RejoinResult = { ok: true; player: Player } | { ok: false }
