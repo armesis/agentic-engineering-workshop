@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit/push/close only with explicit user go-ahead at each step.
+description: Implement a GitHub issue end-to-end - fetch it, ground the approach in existing PRD/ADR/glossary docs, build the change, verify it by actually running it, then commit/push/close only with explicit user go-ahead at each step, proposing a skill refinement afterward if a better way surfaced.
 disable-model-invocation: true
 ---
 
@@ -50,3 +50,7 @@ Pushing and closing the issue are separate checkpoints from committing, not bund
 
 - Push: `git push`.
 - Close: `gh issue close <number> --comment "..."`, referencing the commit SHA and summarizing what was implemented against the acceptance criteria.
+
+### 10. Propose a skill refinement, if warranted
+
+After pushing, reflect on whether anything in steps 1-9 turned out to be wrong, missing, or clumsy for this repo/issue — a step that didn't fit, a better sequencing, a gap the docs didn't cover. If so, propose a concrete edit to this SKILL.md to the user before ending the turn. Don't propose a refinement just to have one; skip this step if nothing genuinely better surfaced.
