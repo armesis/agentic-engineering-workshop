@@ -3,6 +3,7 @@ import path from "node:path";
 import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
+import { joinRoster, type Player } from "./roster.js";
 
 try {
   // Optional in production, where HOST_PASSWORD is expected to already be set in the environment.
@@ -34,10 +35,34 @@ app.get("*", (_req, res) => {
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
+let roster: Player[] = [];
+
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
+  socket.emit("roster:update", roster);
+
+  socket.on(
+    "player:join",
+    (
+      candidate: { username: string; avatar: string },
+      ack?: (result: ReturnType<typeof joinRoster>) => void,
+    ) => {
+      const result = joinRoster(roster, { id: socket.id, ...candidate });
+      if (result.ok) {
+        roster = [...roster, result.player];
+        io.emit("roster:update", roster);
+      }
+      ack?.(result);
+    },
+  );
+
   socket.on("disconnect", () => {
     console.log(`Socket disconnected: ${socket.id}`);
+    const remaining = roster.filter((p) => p.id !== socket.id);
+    if (remaining.length !== roster.length) {
+      roster = remaining;
+      io.emit("roster:update", roster);
+    }
   });
 });
 

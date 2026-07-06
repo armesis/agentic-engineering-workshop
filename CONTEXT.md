@@ -2,6 +2,29 @@
 
 A real-time multiplayer quiz game (client + server) built live during the workshop, then replicated by participants for their own client.
 
+## Structure
+
+```
+CONTEXT.md              Domain glossary (this file)
+docs/adr/                Architecture Decision Records
+client/                  React + Vite + TypeScript frontend; Host and Player share one app, split by ?role= query param
+  src/
+    App.tsx                Role switch: Host login/screen vs Player join/waiting flow
+    HostLogin.tsx          Host password form
+    HostScreen.tsx         Authenticated Host shell showing the live roster of joined Players
+    PlayerJoin.tsx         Player join form: Username + preset Avatar grid
+    WaitingRoom.tsx        Screen shown to a Player after a successful join
+    socket.ts              Shared Socket.IO client connection
+    types.ts               Shared client-side types (e.g. Player)
+  public/                Static assets served as-is (favicon, icon sprite)
+server/                  Node.js + Express + TypeScript + Socket.IO backend
+  src/
+    index.ts               Express app, static client serving, Socket.IO wiring, in-memory roster
+    roster.ts              Pure join-validation logic (unit tested)
+    roster.test.ts         Vitest unit tests for roster.ts
+skills/                  Claude Code skills used to build this project (not part of the shipped app)
+```
+
 ## Language
 
 **Host**:

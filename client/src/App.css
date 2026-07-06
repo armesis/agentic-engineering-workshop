@@ -56,6 +56,48 @@
   }
 }
 
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 320px;
+}
+
+.avatar-option {
+  font-size: 28px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+
+  &[aria-checked='true'] {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+}
+
+.roster {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    color: var(--text-h);
+  }
+}
+
 #center {
   display: flex;
   flex-direction: column;
