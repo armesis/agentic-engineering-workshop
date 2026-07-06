@@ -32,7 +32,7 @@ Write the code / scaffold the tools / wire the config per the plan, following th
 
 ### 6. Verify end-to-end by actually running it
 
-Typechecking and unit tests confirm correctness, not that the feature works. Build it, run it, and exercise the real path: start the server, hit it, drive the actual protocol/flow (e.g. open a real socket connection, not just assert a handler exists). Run the full test suite once. Clean up any throwaway verification scripts/processes afterward.
+Typechecking and unit tests confirm correctness, not that the feature works. Before starting the server, check the target port isn't already occupied by a stale process from a previous verification session (e.g. `netstat`/`Get-Process`), and stop it first — otherwise a fresh build silently fails to bind while an old process keeps answering, and every request you drive exercises stale code. Build it, run it, and exercise the real path: start the server, hit it, drive the actual protocol/flow (e.g. open a real socket connection, not just assert a handler exists). Run the full test suite once. Clean up any throwaway verification scripts/processes afterward.
 
 ### 7. Review
 
