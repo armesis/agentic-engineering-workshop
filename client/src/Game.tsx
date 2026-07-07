@@ -2,6 +2,7 @@ import { useState } from 'react'
 import QuestionRound from './QuestionRound'
 import Reveal from './Reveal'
 import Leaderboard from './Leaderboard'
+import FinalResults from './FinalResults'
 import { useSocketEvent } from './useSocketEvent'
 import type { GamePhase, LeaderboardEntry, Player, PlayerRevealResult } from './types'
 
@@ -16,8 +17,10 @@ function Game({ player, gamePhase }: GameProps) {
   // these on entering Reveal/Leaderboard - no race with those phases' renders below.
   const [revealResult, setRevealResult] = useState<PlayerRevealResult | null>(null)
   const [leaderboardEntry, setLeaderboardEntry] = useState<LeaderboardEntry | null>(null)
+  const [finalStandings, setFinalStandings] = useState<LeaderboardEntry[]>([])
   useSocketEvent('player:reveal', setRevealResult)
   useSocketEvent('player:leaderboard', setLeaderboardEntry)
+  useSocketEvent('final-results:show', setFinalStandings)
 
   if (gamePhase === 'question') {
     return <QuestionRound player={player} />
@@ -29,6 +32,10 @@ function Game({ player, gamePhase }: GameProps) {
 
   if (gamePhase === 'leaderboard') {
     return <Leaderboard entry={leaderboardEntry} />
+  }
+
+  if (gamePhase === 'final-results') {
+    return <FinalResults standings={finalStandings} />
   }
 
   return (

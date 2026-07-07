@@ -21,6 +21,7 @@ client/                  React + Vite + TypeScript frontend; Host and Player sha
     Reveal.tsx              Player-facing Reveal UI: shows the Player's own correct/incorrect result and points earned
     Leaderboard.tsx         Player-facing Leaderboard UI: shows the Player's own current rank and score
     HostLeaderboard.tsx     Host-facing top-5 standings list with a FLIP-animated reorder transition
+    FinalResults.tsx        Shared Host/Player Final Results screen: animated top-3 podium plus the rest of the standings
     answerShapes.ts        A/B/C/D -> shape/color/label map for the answer buttons (Kahoot-style)
     socket.ts              Shared Socket.IO client connection
     useSocketEvent.ts      Hook subscribing a state setter to a Socket.IO event for the component's lifetime

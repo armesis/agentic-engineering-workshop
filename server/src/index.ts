@@ -12,6 +12,7 @@ import {
   beginLeaderboard,
   beginReveal,
   canJoin,
+  showFinalResults,
   startGame,
   LEADERBOARD_DURATION_MS,
   REVEAL_DURATION_MS,
@@ -161,19 +162,35 @@ function showLeaderboard() {
 
 // Fires once Leaderboard's fixed duration has elapsed - the entire
 // Question -> Reveal -> Leaderboard cycle repeats with no Host action until
-// the Question Bank is exhausted, at which point the Game stays put in
-// Leaderboard (a Final Results screen is a later issue, #12).
+// the Question Bank is exhausted, at which point the Game transitions to
+// Final Results instead of advancing again.
 function advanceToNextQuestion() {
   const nextIndex = currentQuestionIndex + 1;
-  const result = advanceQuestion(gamePhase, nextIndex < questionBank.length);
-  if (!result.ok) return;
-  beginQuestion(nextIndex);
+  const hasNextQuestion = nextIndex < questionBank.length;
+
+  const result = advanceQuestion(gamePhase, hasNextQuestion);
+  if (result.ok) {
+    beginQuestion(nextIndex);
+    return;
+  }
+
+  const finalResult = showFinalResults(gamePhase, hasNextQuestion);
+  if (!finalResult.ok) return;
+  gamePhase = finalResult.phase;
+  io.emit("game:phase", gamePhase);
+  io.emit("final-results:show", buildLeaderboard(roster));
 }
 
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
   socket.emit("roster:update", roster);
   socket.emit("game:phase", gamePhase);
+  // Final Results has no timer and sits indefinitely, so unlike Reveal/
+  // Leaderboard's brief windows, a (re)connect arriving after the one-shot
+  // transition broadcast needs the standings resent or it lands on an empty podium.
+  if (gamePhase === "final-results") {
+    socket.emit("final-results:show", buildLeaderboard(roster));
+  }
 
   // Only the Host Screen shows question text, options, and a countdown -
   // Players never receive Question content at all, only the phase change.

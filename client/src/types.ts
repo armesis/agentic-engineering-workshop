@@ -7,7 +7,7 @@ export interface Player {
 
 export type JoinResult = { ok: true; player: Player } | { ok: false; error: string }
 export type RejoinResult = { ok: true; player: Player } | { ok: false }
-export type GamePhase = 'waiting' | 'question' | 'reveal' | 'leaderboard'
+export type GamePhase = 'waiting' | 'question' | 'reveal' | 'leaderboard' | 'final-results'
 
 export type AnswerOption = 'A' | 'B' | 'C' | 'D'
 

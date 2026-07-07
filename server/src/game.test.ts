@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { advanceQuestion, beginLeaderboard, beginReveal, canJoin, startGame } from "./game.js";
+import {
+  advanceQuestion,
+  beginLeaderboard,
+  beginReveal,
+  canJoin,
+  showFinalResults,
+  startGame,
+} from "./game.js";
 
 describe("startGame", () => {
   it("starts the Game from the waiting phase, straight into the first Question", () => {
@@ -53,6 +60,20 @@ describe("advanceQuestion", () => {
 
   it("refuses to advance from outside the Leaderboard phase", () => {
     expect(advanceQuestion("reveal", true)).toEqual({ ok: false });
+  });
+});
+
+describe("showFinalResults", () => {
+  it("shows Final Results once Leaderboard is underway with no next Question", () => {
+    expect(showFinalResults("leaderboard", false)).toEqual({ ok: true, phase: "final-results" });
+  });
+
+  it("refuses when a next Question remains", () => {
+    expect(showFinalResults("leaderboard", true)).toEqual({ ok: false });
+  });
+
+  it("refuses from outside the Leaderboard phase", () => {
+    expect(showFinalResults("reveal", false)).toEqual({ ok: false });
   });
 });
 

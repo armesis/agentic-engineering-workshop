@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
 import { useSocketEvent } from './useSocketEvent'
 import HostLeaderboard from './HostLeaderboard'
+import FinalResults from './FinalResults'
 import type {
   AnswerOption,
   GamePhase,
@@ -28,6 +29,7 @@ function HostScreen() {
   const [currentQuestion, setCurrentQuestion] = useState<HostQuestionView | null>(null)
   const [revealView, setRevealView] = useState<HostRevealView | null>(null)
   const [standings, setStandings] = useState<LeaderboardEntry[]>([])
+  const [finalStandings, setFinalStandings] = useState<LeaderboardEntry[]>([])
   const [countdown, setCountdown] = useState(0)
   // window.location.hostname may be "localhost", which other devices on the
   // network can't resolve; fetch the server's LAN address for the QR code instead.
@@ -38,6 +40,7 @@ function HostScreen() {
   useSocketEvent('question:show', setCurrentQuestion)
   useSocketEvent('question:reveal', setRevealView)
   useSocketEvent('leaderboard:show', setStandings)
+  useSocketEvent('final-results:show', setFinalStandings)
 
   useEffect(() => {
     fetch('/api/network-info')
@@ -106,6 +109,7 @@ function HostScreen() {
         </div>
       )}
       {gamePhase === 'leaderboard' && <HostLeaderboard standings={standings} />}
+      {gamePhase === 'final-results' && <FinalResults standings={finalStandings} />}
     </section>
   )
 }

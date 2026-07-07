@@ -1,4 +1,4 @@
-export type GamePhase = "waiting" | "question" | "reveal" | "leaderboard";
+export type GamePhase = "waiting" | "question" | "reveal" | "leaderboard" | "final-results";
 
 export const REVEAL_DURATION_MS = 5000;
 export const LEADERBOARD_DURATION_MS = 5000;
@@ -32,13 +32,22 @@ export function beginLeaderboard(phase: GamePhase): BeginLeaderboardResult {
 
 export type AdvanceQuestionResult = { ok: true; phase: GamePhase } | { ok: false };
 
-// When there's no next Question, the Game stays in Leaderboard rather than
-// advancing - a Final Results screen to replace that is a later issue (#12).
+// Refuses when there's no next Question - showFinalResults handles that
+// transition instead.
 export function advanceQuestion(phase: GamePhase, hasNextQuestion: boolean): AdvanceQuestionResult {
   if (phase !== "leaderboard" || !hasNextQuestion) {
     return { ok: false };
   }
   return { ok: true, phase: "question" };
+}
+
+export type ShowFinalResultsResult = { ok: true; phase: GamePhase } | { ok: false };
+
+export function showFinalResults(phase: GamePhase, hasNextQuestion: boolean): ShowFinalResultsResult {
+  if (phase !== "leaderboard" || hasNextQuestion) {
+    return { ok: false };
+  }
+  return { ok: true, phase: "final-results" };
 }
 
 export type JoinGateResult = { ok: true } | { ok: false; error: string };
