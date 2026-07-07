@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { createSocket } from "node:dgram";
 import { createServer } from "node:http";
@@ -7,6 +8,7 @@ import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
 import { canJoin, startGame, type GamePhase } from "./game.js";
+import { parseQuestionBank } from "./questionBank.js";
 
 // A machine can have several non-internal IPv4 interfaces at once (VirtualBox
 // host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
@@ -37,8 +39,13 @@ try {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.resolve(__dirname, "../../client/dist");
+const questionsCsvPath = path.resolve(__dirname, "../questions.csv");
 const port = Number(process.env.PORT) || 1923;
 const hostPassword = process.env.HOST_PASSWORD;
+
+// Loaded once at startup and held for the process's lifetime - no reload mechanism (ADR-0003).
+const questionBank = parseQuestionBank(readFileSync(questionsCsvPath, "utf-8"));
+console.log(`Loaded ${questionBank.length} questions into the Question Bank`);
 
 const app = express();
 app.use(express.json());

@@ -1,0 +1,9 @@
+question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier
+What does "LLM" stand for?,Large Language Model,Long Loop Method,Live Logic Machine,Linked List Model,A,15,1
+Which company created Claude?,OpenAI,Anthropic,Google,Meta,B,15,1
+In a Kahoot-style quiz what determines your score on a correct answer?,Only accuracy,Only speed,Speed and accuracy,A coin flip,C,20,1
+What HTTP library does this server use?,Koa,Fastify,Express,Hapi,C,15,1
+Which protocol powers the real-time roster updates in this app?,REST polling,WebSockets via Socket.IO,Server-Sent Events,GraphQL subscriptions,B,15,1
+When left blank in the Question Bank CSV which field defaults to 1?,time_limit_seconds,multiplier,correct_option,question,B,20,2
+What does "PRD" stand for?,Product Requirements Document,Peer Review Draft,Project Roadmap Document,Programmatic Response Design,A,20,1
+Does the Question Bank reload automatically when the CSV file changes?,Yes always,Yes but only for the Host,No a server restart is required,No unless a file-watcher is enabled,C,10,3

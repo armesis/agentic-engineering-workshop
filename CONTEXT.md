@@ -23,12 +23,15 @@ client/                  React + Vite + TypeScript frontend; Host and Player sha
     playerIdentity.ts      localStorage persistence of a Player's identity for reconnect
   public/                Static assets served as-is (favicon, icon sprite)
 server/                  Node.js + Express + TypeScript + Socket.IO backend
+  questions.csv           Question Bank source data, read once at server startup
   src/
     index.ts               Express app, static client serving, Socket.IO wiring, in-memory roster and game phase
     roster.ts              Pure join-validation logic (unit tested)
     roster.test.ts         Vitest unit tests for roster.ts
     game.ts                Pure game-phase transition and join-gating logic (unit tested)
     game.test.ts           Vitest unit tests for game.ts
+    questionBank.ts        Pure CSV-to-Question Bank parsing logic (unit tested)
+    questionBank.test.ts   Vitest unit tests for questionBank.ts
 skills/                  Claude Code skills used to build this project (not part of the shipped app)
 ```
 
