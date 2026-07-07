@@ -7,7 +7,7 @@ export interface Player {
 
 export type JoinResult = { ok: true; player: Player } | { ok: false; error: string }
 export type RejoinResult = { ok: true; player: Player } | { ok: false }
-export type GamePhase = 'waiting' | 'question' | 'reveal'
+export type GamePhase = 'waiting' | 'question' | 'reveal' | 'leaderboard'
 
 export type AnswerOption = 'A' | 'B' | 'C' | 'D'
 
@@ -28,6 +28,14 @@ export interface HostRevealView {
 export interface PlayerRevealResult {
   correct: boolean
   pointsEarned: number
+}
+
+export interface LeaderboardEntry {
+  playerId: string
+  username: string
+  avatar: string
+  score: number
+  rank: number
 }
 
 export type SubmitAnswerResult =

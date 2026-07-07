@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import QuestionRound from './QuestionRound'
 import Reveal from './Reveal'
+import Leaderboard from './Leaderboard'
 import { useSocketEvent } from './useSocketEvent'
-import type { GamePhase, Player, PlayerRevealResult } from './types'
+import type { GamePhase, LeaderboardEntry, Player, PlayerRevealResult } from './types'
 
 interface GameProps {
   player: Player
@@ -12,9 +13,11 @@ interface GameProps {
 function Game({ player, gamePhase }: GameProps) {
   // Registered as soon as the Game mounts (i.e. once the Question phase
   // begins), so it's already listening well before the server later emits
-  // this on entering Reveal - no race with the Reveal-phase render below.
+  // these on entering Reveal/Leaderboard - no race with those phases' renders below.
   const [revealResult, setRevealResult] = useState<PlayerRevealResult | null>(null)
+  const [leaderboardEntry, setLeaderboardEntry] = useState<LeaderboardEntry | null>(null)
   useSocketEvent('player:reveal', setRevealResult)
+  useSocketEvent('player:leaderboard', setLeaderboardEntry)
 
   if (gamePhase === 'question') {
     return <QuestionRound player={player} />
@@ -22,6 +25,10 @@ function Game({ player, gamePhase }: GameProps) {
 
   if (gamePhase === 'reveal') {
     return <Reveal result={revealResult} />
+  }
+
+  if (gamePhase === 'leaderboard') {
+    return <Leaderboard entry={leaderboardEntry} />
   }
 
   return (

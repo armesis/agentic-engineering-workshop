@@ -7,7 +7,16 @@ import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
-import { beginReveal, canJoin, startGame, type GamePhase } from "./game.js";
+import {
+  advanceQuestion,
+  beginLeaderboard,
+  beginReveal,
+  canJoin,
+  startGame,
+  LEADERBOARD_DURATION_MS,
+  REVEAL_DURATION_MS,
+  type GamePhase,
+} from "./game.js";
 import {
   parseQuestionBank,
   toHostQuestionView,
@@ -21,6 +30,7 @@ import {
   GRACE_WINDOW_MS,
   type AnswerSubmission,
 } from "./scoring.js";
+import { buildLeaderboard, findEntry, topStandings } from "./leaderboard.js";
 
 // A machine can have several non-internal IPv4 interfaces at once (VirtualBox
 // host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
@@ -88,11 +98,27 @@ const HOST_ROOM = "host";
 let roster: Player[] = [];
 let gamePhase: GamePhase = "waiting";
 let currentQuestion: Question | null = null;
+let currentQuestionIndex = -1;
 let questionStartedAtMs = 0;
 let answers: Record<string, AnswerSubmission> = {};
 
 function playerRoom(playerId: string): string {
   return `player:${playerId}`;
+}
+
+// Shared by the initial Play press and the auto-advance loop: enters the
+// Question phase at the given Question Bank index and schedules Reveal.
+function beginQuestion(index: number) {
+  currentQuestionIndex = index;
+  currentQuestion = questionBank[index] ?? null;
+  questionStartedAtMs = Date.now();
+  answers = {};
+  gamePhase = "question";
+  io.emit("game:phase", gamePhase);
+  if (currentQuestion) {
+    io.to(HOST_ROOM).emit("question:show", toHostQuestionView(currentQuestion, questionStartedAtMs));
+    setTimeout(revealQuestion, currentQuestion.timeLimitSeconds * 1000 + GRACE_WINDOW_MS);
+  }
 }
 
 // Fires once the Question's timer plus grace window has elapsed - matches the
@@ -112,6 +138,36 @@ function revealQuestion() {
     );
     io.to(playerRoom(player.id)).emit("player:reveal", revealResult);
   }
+  setTimeout(showLeaderboard, REVEAL_DURATION_MS);
+}
+
+// Fires once Reveal's fixed duration has elapsed.
+function showLeaderboard() {
+  const result = beginLeaderboard(gamePhase);
+  if (!result.ok) return;
+
+  gamePhase = result.phase;
+  io.emit("game:phase", gamePhase);
+  const standings = buildLeaderboard(roster);
+  io.to(HOST_ROOM).emit("leaderboard:show", topStandings(standings));
+  for (const player of roster) {
+    const entry = findEntry(standings, player.id);
+    if (entry) {
+      io.to(playerRoom(player.id)).emit("player:leaderboard", entry);
+    }
+  }
+  setTimeout(advanceToNextQuestion, LEADERBOARD_DURATION_MS);
+}
+
+// Fires once Leaderboard's fixed duration has elapsed - the entire
+// Question -> Reveal -> Leaderboard cycle repeats with no Host action until
+// the Question Bank is exhausted, at which point the Game stays put in
+// Leaderboard (a Final Results screen is a later issue, #12).
+function advanceToNextQuestion() {
+  const nextIndex = currentQuestionIndex + 1;
+  const result = advanceQuestion(gamePhase, nextIndex < questionBank.length);
+  if (!result.ok) return;
+  beginQuestion(nextIndex);
 }
 
 io.on("connection", (socket) => {
@@ -154,18 +210,7 @@ io.on("connection", (socket) => {
     if (!result.ok) {
       return;
     }
-    gamePhase = result.phase;
-    currentQuestion = questionBank[0] ?? null;
-    questionStartedAtMs = Date.now();
-    answers = {};
-    io.emit("game:phase", gamePhase);
-    if (currentQuestion) {
-      io.to(HOST_ROOM).emit(
-        "question:show",
-        toHostQuestionView(currentQuestion, questionStartedAtMs),
-      );
-      setTimeout(revealQuestion, currentQuestion.timeLimitSeconds * 1000 + GRACE_WINDOW_MS);
-    }
+    beginQuestion(0);
   });
 
   socket.on(
@@ -205,8 +250,8 @@ io.on("connection", (socket) => {
         );
         // The updated roster (cumulative scores) isn't broadcast live here -
         // Reveal sends each Player their own points-earned-this-Question
-        // separately (revealQuestion), and Leaderboard (a later issue) is
-        // what broadcasts the roster again.
+        // separately (revealQuestion), and Leaderboard is what broadcasts
+        // standings again (showLeaderboard).
         roster = roster.map((player) =>
           player.id === candidate.playerId
             ? { ...player, score: player.score + points }

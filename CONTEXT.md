@@ -19,6 +19,8 @@ client/                  React + Vite + TypeScript frontend; Host and Player sha
     Game.tsx               Screen shown to a Player once Play has been pressed; branches on GamePhase (Question round so far)
     QuestionRound.tsx      Player-facing Question UI: 4 shape/color-coded answer buttons, first-tap lock-in
     Reveal.tsx              Player-facing Reveal UI: shows the Player's own correct/incorrect result and points earned
+    Leaderboard.tsx         Player-facing Leaderboard UI: shows the Player's own current rank and score
+    HostLeaderboard.tsx     Host-facing top-5 standings list with a FLIP-animated reorder transition
     answerShapes.ts        A/B/C/D -> shape/color/label map for the answer buttons (Kahoot-style)
     socket.ts              Shared Socket.IO client connection
     useSocketEvent.ts      Hook subscribing a state setter to a Socket.IO event for the component's lifetime
@@ -37,6 +39,8 @@ server/                  Node.js + Express + TypeScript + Socket.IO backend
     questionBank.test.ts   Vitest unit tests for questionBank.ts
     scoring.ts             Pure Question-round scoring and first-tap lock-in logic (unit tested)
     scoring.test.ts        Vitest unit tests for scoring.ts
+    leaderboard.ts         Pure roster-to-ranked-standings logic (unit tested)
+    leaderboard.test.ts    Vitest unit tests for leaderboard.ts
 skills/                  Claude Code skills used to build this project (not part of the shipped app)
 ```
 

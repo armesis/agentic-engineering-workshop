@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
 import { useSocketEvent } from './useSocketEvent'
-import type { AnswerOption, GamePhase, HostQuestionView, HostRevealView, Player } from './types'
+import HostLeaderboard from './HostLeaderboard'
+import type {
+  AnswerOption,
+  GamePhase,
+  HostQuestionView,
+  HostRevealView,
+  LeaderboardEntry,
+  Player,
+} from './types'
 
 function buildJoinUrl(host: string): string {
   const port = window.location.port ? `:${window.location.port}` : ''
@@ -19,6 +27,7 @@ function HostScreen() {
   const [gamePhase, setGamePhase] = useState<GamePhase>('waiting')
   const [currentQuestion, setCurrentQuestion] = useState<HostQuestionView | null>(null)
   const [revealView, setRevealView] = useState<HostRevealView | null>(null)
+  const [standings, setStandings] = useState<LeaderboardEntry[]>([])
   const [countdown, setCountdown] = useState(0)
   // window.location.hostname may be "localhost", which other devices on the
   // network can't resolve; fetch the server's LAN address for the QR code instead.
@@ -28,6 +37,7 @@ function HostScreen() {
   useSocketEvent('game:phase', setGamePhase)
   useSocketEvent('question:show', setCurrentQuestion)
   useSocketEvent('question:reveal', setRevealView)
+  useSocketEvent('leaderboard:show', setStandings)
 
   useEffect(() => {
     fetch('/api/network-info')
@@ -95,6 +105,7 @@ function HostScreen() {
           </ul>
         </div>
       )}
+      {gamePhase === 'leaderboard' && <HostLeaderboard standings={standings} />}
     </section>
   )
 }

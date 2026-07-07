@@ -1,8 +1,7 @@
-export type GamePhase = "waiting" | "question" | "reveal";
+export type GamePhase = "waiting" | "question" | "reveal" | "leaderboard";
 
-// The duration Reveal is defined to last; #11 (Leaderboard + full auto-advance
-// loop) is what actually schedules leaving Reveal after this many ms.
 export const REVEAL_DURATION_MS = 5000;
+export const LEADERBOARD_DURATION_MS = 5000;
 
 export type StartGameResult = { ok: true; phase: GamePhase } | { ok: false };
 
@@ -20,6 +19,26 @@ export function beginReveal(phase: GamePhase): BeginRevealResult {
     return { ok: false };
   }
   return { ok: true, phase: "reveal" };
+}
+
+export type BeginLeaderboardResult = { ok: true; phase: GamePhase } | { ok: false };
+
+export function beginLeaderboard(phase: GamePhase): BeginLeaderboardResult {
+  if (phase !== "reveal") {
+    return { ok: false };
+  }
+  return { ok: true, phase: "leaderboard" };
+}
+
+export type AdvanceQuestionResult = { ok: true; phase: GamePhase } | { ok: false };
+
+// When there's no next Question, the Game stays in Leaderboard rather than
+// advancing - a Final Results screen to replace that is a later issue (#12).
+export function advanceQuestion(phase: GamePhase, hasNextQuestion: boolean): AdvanceQuestionResult {
+  if (phase !== "leaderboard" || !hasNextQuestion) {
+    return { ok: false };
+  }
+  return { ok: true, phase: "question" };
 }
 
 export type JoinGateResult = { ok: true } | { ok: false; error: string };

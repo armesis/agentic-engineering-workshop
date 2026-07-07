@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { beginReveal, canJoin, startGame } from "./game.js";
+import { advanceQuestion, beginLeaderboard, beginReveal, canJoin, startGame } from "./game.js";
 
 describe("startGame", () => {
   it("starts the Game from the waiting phase, straight into the first Question", () => {
@@ -25,6 +25,34 @@ describe("beginReveal", () => {
 
   it("refuses to enter Reveal again once already in Reveal", () => {
     expect(beginReveal("reveal")).toEqual({ ok: false });
+  });
+});
+
+describe("beginLeaderboard", () => {
+  it("enters Leaderboard once Reveal is underway", () => {
+    expect(beginLeaderboard("reveal")).toEqual({ ok: true, phase: "leaderboard" });
+  });
+
+  it("refuses to enter Leaderboard from the question phase", () => {
+    expect(beginLeaderboard("question")).toEqual({ ok: false });
+  });
+
+  it("refuses to enter Leaderboard again once already in Leaderboard", () => {
+    expect(beginLeaderboard("leaderboard")).toEqual({ ok: false });
+  });
+});
+
+describe("advanceQuestion", () => {
+  it("advances to the next Question when one remains in the Question Bank", () => {
+    expect(advanceQuestion("leaderboard", true)).toEqual({ ok: true, phase: "question" });
+  });
+
+  it("refuses to advance when there is no next Question", () => {
+    expect(advanceQuestion("leaderboard", false)).toEqual({ ok: false });
+  });
+
+  it("refuses to advance from outside the Leaderboard phase", () => {
+    expect(advanceQuestion("reveal", true)).toEqual({ ok: false });
   });
 });
 
