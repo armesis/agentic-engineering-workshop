@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GRACE_WINDOW_MS, calculateScore, submitAnswer } from "./scoring.js";
+import { GRACE_WINDOW_MS, buildRevealResult, calculateScore, submitAnswer } from "./scoring.js";
 import type { Question } from "./questionBank.js";
 
 const question: Question = {
@@ -73,6 +73,37 @@ describe("calculateScore", () => {
   it("scores 0 when there is no submission at all", () => {
     const score = calculateScore({ question, questionStartedAtMs: 0 }, null);
     expect(score).toBe(0);
+  });
+});
+
+describe("buildRevealResult", () => {
+  it("reports correct with the points earned for a fast correct answer", () => {
+    const result = buildRevealResult(
+      { question, questionStartedAtMs: 0 },
+      { optionLetter: "B", submittedAtMs: 0 },
+    );
+    expect(result).toEqual({ correct: true, pointsEarned: 1000 });
+  });
+
+  it("reports incorrect with 0 points for a wrong answer", () => {
+    const result = buildRevealResult(
+      { question, questionStartedAtMs: 0 },
+      { optionLetter: "A", submittedAtMs: 0 },
+    );
+    expect(result).toEqual({ correct: false, pointsEarned: 0 });
+  });
+
+  it("reports incorrect with 0 points for a correct answer arriving after the grace window", () => {
+    const result = buildRevealResult(
+      { question, questionStartedAtMs: 0 },
+      { optionLetter: "B", submittedAtMs: 20_000 + GRACE_WINDOW_MS + 1 },
+    );
+    expect(result).toEqual({ correct: false, pointsEarned: 0 });
+  });
+
+  it("reports incorrect with 0 points when there is no submission at all", () => {
+    const result = buildRevealResult({ question, questionStartedAtMs: 0 }, null);
+    expect(result).toEqual({ correct: false, pointsEarned: 0 });
   });
 });
 

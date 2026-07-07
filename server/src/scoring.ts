@@ -41,6 +41,21 @@ export function calculateScore(
   return Math.round(base) * question.multiplier;
 }
 
+export interface PlayerRevealResult {
+  correct: boolean;
+  pointsEarned: number;
+}
+
+// A correct answer that arrives after the grace window scores 0, same as a
+// wrong one - so "correct" for Reveal purposes is just "earned points".
+export function buildRevealResult(
+  context: ScoringContext,
+  submission: AnswerSubmission | null,
+): PlayerRevealResult {
+  const pointsEarned = calculateScore(context, submission);
+  return { correct: pointsEarned > 0, pointsEarned };
+}
+
 export type SubmitAnswerResult =
   | { ok: true; submission: AnswerSubmission }
   | { ok: false; error: string };

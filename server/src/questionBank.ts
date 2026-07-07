@@ -30,6 +30,14 @@ export function toHostQuestionView(question: Question, startedAtMs: number): Hos
   return { question: text, optionA, optionB, optionC, optionD, timeLimitSeconds, startedAtMs };
 }
 
+export interface HostRevealView {
+  correctOption: Question["correctOption"];
+}
+
+export function toHostRevealView(question: Question): HostRevealView {
+  return { correctOption: question.correctOption };
+}
+
 // Fixed schema, one header row: question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier
 export function parseQuestionBank(csv: string): Question[] {
   const lines = csv

@@ -140,7 +140,20 @@
     border-radius: 8px;
     background: var(--accent-bg);
     color: var(--text-h);
+
+    &.correct {
+      background: #26890c;
+      color: white;
+    }
   }
+}
+
+.reveal-correct {
+  color: #26890c;
+}
+
+.reveal-incorrect {
+  color: #e21b3c;
 }
 
 .roster {

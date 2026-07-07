@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canJoin, startGame } from "./game.js";
+import { beginReveal, canJoin, startGame } from "./game.js";
 
 describe("startGame", () => {
   it("starts the Game from the waiting phase, straight into the first Question", () => {
@@ -10,6 +10,21 @@ describe("startGame", () => {
   it("refuses to start the Game again once already started", () => {
     const result = startGame("question");
     expect(result).toEqual({ ok: false });
+  });
+});
+
+describe("beginReveal", () => {
+  it("enters Reveal once a Question is underway", () => {
+    const result = beginReveal("question");
+    expect(result).toEqual({ ok: true, phase: "reveal" });
+  });
+
+  it("refuses to enter Reveal from the waiting phase", () => {
+    expect(beginReveal("waiting")).toEqual({ ok: false });
+  });
+
+  it("refuses to enter Reveal again once already in Reveal", () => {
+    expect(beginReveal("reveal")).toEqual({ ok: false });
   });
 });
 

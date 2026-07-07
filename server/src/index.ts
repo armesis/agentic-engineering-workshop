@@ -7,9 +7,20 @@ import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
-import { canJoin, startGame, type GamePhase } from "./game.js";
-import { parseQuestionBank, toHostQuestionView, type Question } from "./questionBank.js";
-import { calculateScore, submitAnswer, type AnswerSubmission } from "./scoring.js";
+import { beginReveal, canJoin, startGame, type GamePhase } from "./game.js";
+import {
+  parseQuestionBank,
+  toHostQuestionView,
+  toHostRevealView,
+  type Question,
+} from "./questionBank.js";
+import {
+  buildRevealResult,
+  calculateScore,
+  submitAnswer,
+  GRACE_WINDOW_MS,
+  type AnswerSubmission,
+} from "./scoring.js";
 
 // A machine can have several non-internal IPv4 interfaces at once (VirtualBox
 // host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
@@ -80,6 +91,29 @@ let currentQuestion: Question | null = null;
 let questionStartedAtMs = 0;
 let answers: Record<string, AnswerSubmission> = {};
 
+function playerRoom(playerId: string): string {
+  return `player:${playerId}`;
+}
+
+// Fires once the Question's timer plus grace window has elapsed - matches the
+// same GRACE_WINDOW_MS scoring.ts uses to decide whether a submission is late.
+function revealQuestion() {
+  if (!currentQuestion) return;
+  const result = beginReveal(gamePhase);
+  if (!result.ok) return;
+
+  gamePhase = result.phase;
+  io.emit("game:phase", gamePhase);
+  io.to(HOST_ROOM).emit("question:reveal", toHostRevealView(currentQuestion));
+  for (const player of roster) {
+    const revealResult = buildRevealResult(
+      { question: currentQuestion, questionStartedAtMs },
+      answers[player.id] ?? null,
+    );
+    io.to(playerRoom(player.id)).emit("player:reveal", revealResult);
+  }
+}
+
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
   socket.emit("roster:update", roster);
@@ -108,6 +142,7 @@ io.on("connection", (socket) => {
       const result = joinRoster(roster, { id: randomUUID(), ...candidate });
       if (result.ok) {
         roster = [...roster, result.player];
+        socket.join(playerRoom(result.player.id));
         io.emit("roster:update", roster);
       }
       ack?.(result);
@@ -129,6 +164,7 @@ io.on("connection", (socket) => {
         "question:show",
         toHostQuestionView(currentQuestion, questionStartedAtMs),
       );
+      setTimeout(revealQuestion, currentQuestion.timeLimitSeconds * 1000 + GRACE_WINDOW_MS);
     }
   });
 
@@ -138,7 +174,11 @@ io.on("connection", (socket) => {
       identity: { id: string },
       ack?: (result: ReturnType<typeof reattachPlayer>) => void,
     ) => {
-      ack?.(reattachPlayer(roster, identity?.id));
+      const result = reattachPlayer(roster, identity?.id);
+      if (result.ok) {
+        socket.join(playerRoom(result.player.id));
+      }
+      ack?.(result);
     },
   );
 
@@ -163,9 +203,10 @@ io.on("connection", (socket) => {
           { question: currentQuestion, questionStartedAtMs },
           result.submission,
         );
-        // Scores aren't broadcast live during the Question phase - that's
-        // Reveal/Leaderboard's job (separate issues); they'll read the
-        // updated roster the next time it's sent.
+        // The updated roster (cumulative scores) isn't broadcast live here -
+        // Reveal sends each Player their own points-earned-this-Question
+        // separately (revealQuestion), and Leaderboard (a later issue) is
+        // what broadcasts the roster again.
         roster = roster.map((player) =>
           player.id === candidate.playerId
             ? { ...player, score: player.score + points }

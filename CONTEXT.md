@@ -18,6 +18,7 @@ client/                  React + Vite + TypeScript frontend; Host and Player sha
     WaitingRoom.tsx        Screen shown to a Player after a successful join, before Play
     Game.tsx               Screen shown to a Player once Play has been pressed; branches on GamePhase (Question round so far)
     QuestionRound.tsx      Player-facing Question UI: 4 shape/color-coded answer buttons, first-tap lock-in
+    Reveal.tsx              Player-facing Reveal UI: shows the Player's own correct/incorrect result and points earned
     answerShapes.ts        A/B/C/D -> shape/color/label map for the answer buttons (Kahoot-style)
     socket.ts              Shared Socket.IO client connection
     useSocketEvent.ts      Hook subscribing a state setter to a Socket.IO event for the component's lifetime

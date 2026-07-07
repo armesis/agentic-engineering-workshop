@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
 import { useSocketEvent } from './useSocketEvent'
-import type { GamePhase, HostQuestionView, Player } from './types'
+import type { AnswerOption, GamePhase, HostQuestionView, HostRevealView, Player } from './types'
 
 function buildJoinUrl(host: string): string {
   const port = window.location.port ? `:${window.location.port}` : ''
@@ -18,6 +18,7 @@ function HostScreen() {
   const [roster, setRoster] = useState<Player[]>([])
   const [gamePhase, setGamePhase] = useState<GamePhase>('waiting')
   const [currentQuestion, setCurrentQuestion] = useState<HostQuestionView | null>(null)
+  const [revealView, setRevealView] = useState<HostRevealView | null>(null)
   const [countdown, setCountdown] = useState(0)
   // window.location.hostname may be "localhost", which other devices on the
   // network can't resolve; fetch the server's LAN address for the QR code instead.
@@ -26,6 +27,7 @@ function HostScreen() {
   useSocketEvent('roster:update', setRoster)
   useSocketEvent('game:phase', setGamePhase)
   useSocketEvent('question:show', setCurrentQuestion)
+  useSocketEvent('question:reveal', setRevealView)
 
   useEffect(() => {
     fetch('/api/network-info')
@@ -73,15 +75,23 @@ function HostScreen() {
         ))}
       </ul>
       {gamePhase === 'waiting' && <button onClick={handlePlay}>Play</button>}
-      {gamePhase === 'question' && currentQuestion && (
+      {(gamePhase === 'question' || gamePhase === 'reveal') && currentQuestion && (
         <div className="question-view">
-          <p className="countdown">{countdown}</p>
+          {gamePhase === 'question' && <p className="countdown">{countdown}</p>}
           <h2>{currentQuestion.question}</h2>
           <ul className="question-options">
-            <li>{currentQuestion.optionA}</li>
-            <li>{currentQuestion.optionB}</li>
-            <li>{currentQuestion.optionC}</li>
-            <li>{currentQuestion.optionD}</li>
+            {(
+              [
+                ['A', currentQuestion.optionA],
+                ['B', currentQuestion.optionB],
+                ['C', currentQuestion.optionC],
+                ['D', currentQuestion.optionD],
+              ] as [AnswerOption, string][]
+            ).map(([optionLetter, text]) => (
+              <li key={optionLetter} className={revealView?.correctOption === optionLetter ? 'correct' : undefined}>
+                {text}
+              </li>
+            ))}
           </ul>
         </div>
       )}
