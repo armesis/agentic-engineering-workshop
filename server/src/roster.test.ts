@@ -6,28 +6,28 @@ describe("joinRoster", () => {
     const result = joinRoster([], { id: "a", username: "Ahmed", avatar: "🦁" });
     expect(result).toEqual({
       ok: true,
-      player: { id: "a", username: "Ahmed", avatar: "🦁" },
+      player: { id: "a", username: "Ahmed", avatar: "🦁", score: 0 },
     });
   });
 
   it("rejects a duplicate username without altering it", () => {
-    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁", score: 0 }];
     const result = joinRoster(roster, { id: "b", username: "Ahmed", avatar: "🐼" });
     expect(result).toEqual({ ok: false, error: "Username is already taken" });
   });
 
   it("rejects a duplicate username case-insensitively", () => {
-    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁", score: 0 }];
     const result = joinRoster(roster, { id: "b", username: "AHMED", avatar: "🐼" });
     expect(result.ok).toBe(false);
   });
 
   it("allows duplicate avatars across different Players", () => {
-    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁", score: 0 }];
     const result = joinRoster(roster, { id: "b", username: "Sam", avatar: "🦁" });
     expect(result).toEqual({
       ok: true,
-      player: { id: "b", username: "Sam", avatar: "🦁" },
+      player: { id: "b", username: "Sam", avatar: "🦁", score: 0 },
     });
   });
 
@@ -40,23 +40,23 @@ describe("joinRoster", () => {
     const result = joinRoster([], { id: "a", username: "  Ahmed  ", avatar: "🦁" });
     expect(result).toEqual({
       ok: true,
-      player: { id: "a", username: "Ahmed", avatar: "🦁" },
+      player: { id: "a", username: "Ahmed", avatar: "🦁", score: 0 },
     });
   });
 });
 
 describe("reattachPlayer", () => {
   it("reattaches a Player whose id is still on the roster", () => {
-    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁", score: 0 }];
     const result = reattachPlayer(roster, "a");
     expect(result).toEqual({
       ok: true,
-      player: { id: "a", username: "Ahmed", avatar: "🦁" },
+      player: { id: "a", username: "Ahmed", avatar: "🦁", score: 0 },
     });
   });
 
   it("declines to reattach an id that isn't on the roster", () => {
-    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁" }];
+    const roster: Player[] = [{ id: "a", username: "Ahmed", avatar: "🦁", score: 0 }];
     const result = reattachPlayer(roster, "unknown-id");
     expect(result).toEqual({ ok: false });
   });

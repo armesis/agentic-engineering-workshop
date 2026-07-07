@@ -1,4 +1,4 @@
-export type GamePhase = "waiting" | "started";
+export type GamePhase = "waiting" | "question";
 
 export type StartGameResult = { ok: true; phase: GamePhase } | { ok: false };
 
@@ -6,7 +6,7 @@ export function startGame(phase: GamePhase): StartGameResult {
   if (phase !== "waiting") {
     return { ok: false };
   }
-  return { ok: true, phase: "started" };
+  return { ok: true, phase: "question" };
 }
 
 export type JoinGateResult = { ok: true } | { ok: false; error: string };

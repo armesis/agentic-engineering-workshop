@@ -12,6 +12,24 @@ export interface Question {
 export const DEFAULT_TIME_LIMIT_SECONDS = 20;
 export const DEFAULT_MULTIPLIER = 1;
 
+export interface HostQuestionView {
+  question: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  timeLimitSeconds: number;
+  startedAtMs: number;
+}
+
+// The Host Screen shows full question text, options, and a countdown; Player
+// devices show only 4 shape/color-coded buttons and must never receive the
+// correct answer (or any question content) over the wire.
+export function toHostQuestionView(question: Question, startedAtMs: number): HostQuestionView {
+  const { question: text, optionA, optionB, optionC, optionD, timeLimitSeconds } = question;
+  return { question: text, optionA, optionB, optionC, optionD, timeLimitSeconds, startedAtMs };
+}
+
 // Fixed schema, one header row: question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier
 export function parseQuestionBank(csv: string): Question[] {
   const lines = csv

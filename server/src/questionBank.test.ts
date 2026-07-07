@@ -3,6 +3,8 @@ import {
   DEFAULT_MULTIPLIER,
   DEFAULT_TIME_LIMIT_SECONDS,
   parseQuestionBank,
+  toHostQuestionView,
+  type Question,
 } from "./questionBank.js";
 
 const HEADER = "question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier";
@@ -54,5 +56,34 @@ describe("parseQuestionBank", () => {
 
   it("returns an empty Question Bank for a header-only CSV", () => {
     expect(parseQuestionBank(HEADER)).toEqual([]);
+  });
+});
+
+describe("toHostQuestionView", () => {
+  const question: Question = {
+    question: "What is 2+2?",
+    optionA: "3",
+    optionB: "4",
+    optionC: "5",
+    optionD: "6",
+    correctOption: "B",
+    timeLimitSeconds: 15,
+    multiplier: 2,
+  };
+
+  it("carries the question text, options, time limit, and start time", () => {
+    expect(toHostQuestionView(question, 1_000)).toEqual({
+      question: "What is 2+2?",
+      optionA: "3",
+      optionB: "4",
+      optionC: "5",
+      optionD: "6",
+      timeLimitSeconds: 15,
+      startedAtMs: 1_000,
+    });
+  });
+
+  it("never includes the correct answer", () => {
+    expect(toHostQuestionView(question, 1_000)).not.toHaveProperty("correctOption");
   });
 });

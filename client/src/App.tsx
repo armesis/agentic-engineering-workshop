@@ -66,10 +66,14 @@ function PlayerApp() {
   if (checkingStoredIdentity || checkingGamePhase) return null
 
   if (player) {
-    return gamePhase === 'started' ? <Game player={player} /> : <WaitingRoom player={player} />
+    return gamePhase === 'waiting' ? (
+      <WaitingRoom player={player} />
+    ) : (
+      <Game player={player} gamePhase={gamePhase} />
+    )
   }
 
-  if (gamePhase === 'started') {
+  if (gamePhase !== 'waiting') {
     return (
       <section id="center">
         <h1>Game already started</h1>

@@ -16,10 +16,12 @@ client/                  React + Vite + TypeScript frontend; Host and Player sha
     HostScreen.tsx         Authenticated Host shell showing the live roster of joined Players and the Play button
     PlayerJoin.tsx         Player join form: Username + preset Avatar grid
     WaitingRoom.tsx        Screen shown to a Player after a successful join, before Play
-    Game.tsx               Screen shown to a Player once Play has been pressed (placeholder pending the Question round)
+    Game.tsx               Screen shown to a Player once Play has been pressed; branches on GamePhase (Question round so far)
+    QuestionRound.tsx      Player-facing Question UI: 4 shape/color-coded answer buttons, first-tap lock-in
+    answerShapes.ts        A/B/C/D -> shape/color/label map for the answer buttons (Kahoot-style)
     socket.ts              Shared Socket.IO client connection
     useSocketEvent.ts      Hook subscribing a state setter to a Socket.IO event for the component's lifetime
-    types.ts               Shared client-side types (e.g. Player, GamePhase)
+    types.ts               Shared client-side types (e.g. Player, GamePhase, HostQuestionView)
     playerIdentity.ts      localStorage persistence of a Player's identity for reconnect
   public/                Static assets served as-is (favicon, icon sprite)
 server/                  Node.js + Express + TypeScript + Socket.IO backend
@@ -32,6 +34,8 @@ server/                  Node.js + Express + TypeScript + Socket.IO backend
     game.test.ts           Vitest unit tests for game.ts
     questionBank.ts        Pure CSV-to-Question Bank parsing logic (unit tested)
     questionBank.test.ts   Vitest unit tests for questionBank.ts
+    scoring.ts             Pure Question-round scoring and first-tap lock-in logic (unit tested)
+    scoring.test.ts        Vitest unit tests for scoring.ts
 skills/                  Claude Code skills used to build this project (not part of the shipped app)
 ```
 

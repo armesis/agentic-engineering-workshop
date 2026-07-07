@@ -2,6 +2,7 @@ export interface Player {
   id: string;
   username: string;
   avatar: string;
+  score: number;
 }
 
 export type JoinResult =
@@ -27,7 +28,7 @@ export function joinRoster(
     return { ok: false, error: "Username is already taken" };
   }
 
-  return { ok: true, player: { id: candidate.id, username, avatar } };
+  return { ok: true, player: { id: candidate.id, username, avatar, score: 0 } };
 }
 
 export function reattachPlayer(roster: Player[], id: string): RejoinResult {

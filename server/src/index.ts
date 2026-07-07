@@ -8,7 +8,8 @@ import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
 import { canJoin, startGame, type GamePhase } from "./game.js";
-import { parseQuestionBank } from "./questionBank.js";
+import { parseQuestionBank, toHostQuestionView, type Question } from "./questionBank.js";
+import { calculateScore, submitAnswer, type AnswerSubmission } from "./scoring.js";
 
 // A machine can have several non-internal IPv4 interfaces at once (VirtualBox
 // host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
@@ -71,13 +72,27 @@ app.get("*", (_req, res) => {
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
+const HOST_ROOM = "host";
+
 let roster: Player[] = [];
 let gamePhase: GamePhase = "waiting";
+let currentQuestion: Question | null = null;
+let questionStartedAtMs = 0;
+let answers: Record<string, AnswerSubmission> = {};
 
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
   socket.emit("roster:update", roster);
   socket.emit("game:phase", gamePhase);
+
+  // Only the Host Screen shows question text, options, and a countdown -
+  // Players never receive Question content at all, only the phase change.
+  socket.on("host:connect", () => {
+    socket.join(HOST_ROOM);
+    if (currentQuestion) {
+      socket.emit("question:show", toHostQuestionView(currentQuestion, questionStartedAtMs));
+    }
+  });
 
   socket.on(
     "player:join",
@@ -101,9 +116,19 @@ io.on("connection", (socket) => {
 
   socket.on("game:play", () => {
     const result = startGame(gamePhase);
-    if (result.ok) {
-      gamePhase = result.phase;
-      io.emit("game:phase", gamePhase);
+    if (!result.ok) {
+      return;
+    }
+    gamePhase = result.phase;
+    currentQuestion = questionBank[0] ?? null;
+    questionStartedAtMs = Date.now();
+    answers = {};
+    io.emit("game:phase", gamePhase);
+    if (currentQuestion) {
+      io.to(HOST_ROOM).emit(
+        "question:show",
+        toHostQuestionView(currentQuestion, questionStartedAtMs),
+      );
     }
   });
 
@@ -114,6 +139,40 @@ io.on("connection", (socket) => {
       ack?: (result: ReturnType<typeof reattachPlayer>) => void,
     ) => {
       ack?.(reattachPlayer(roster, identity?.id));
+    },
+  );
+
+  socket.on(
+    "player:answer",
+    (
+      candidate: { playerId: string; optionLetter: AnswerSubmission["optionLetter"] },
+      ack?: (result: ReturnType<typeof submitAnswer>) => void,
+    ) => {
+      if (gamePhase !== "question" || !currentQuestion) {
+        ack?.({ ok: false, error: "No active Question" });
+        return;
+      }
+
+      const result = submitAnswer(answers, candidate.playerId, {
+        optionLetter: candidate.optionLetter,
+        submittedAtMs: Date.now(),
+      });
+      if (result.ok) {
+        answers[candidate.playerId] = result.submission;
+        const points = calculateScore(
+          { question: currentQuestion, questionStartedAtMs },
+          result.submission,
+        );
+        // Scores aren't broadcast live during the Question phase - that's
+        // Reveal/Leaderboard's job (separate issues); they'll read the
+        // updated roster the next time it's sent.
+        roster = roster.map((player) =>
+          player.id === candidate.playerId
+            ? { ...player, score: player.score + points }
+            : player,
+        );
+      }
+      ack?.(result);
     },
   );
 
