@@ -2,6 +2,8 @@
 
 A real-time multiplayer quiz game (client + server) built live during the workshop, then replicated by participants for their own client.
 
+> **Note:** The repository root (this file's directory) sits one level below the session's working directory, at `@"Agentic Engineering Workshop\"`.
+
 ## Structure
 
 ```
@@ -9,19 +11,24 @@ CONTEXT.md              Domain glossary (this file)
 docs/adr/                Architecture Decision Records
 client/                  React + Vite + TypeScript frontend; Host and Player share one app, split by ?role= query param
   src/
-    App.tsx                Role switch: Host login/screen vs Player join/waiting flow
+    App.tsx                Role switch: Host login/screen vs Player join/waiting/Game flow
     HostLogin.tsx          Host password form
-    HostScreen.tsx         Authenticated Host shell showing the live roster of joined Players
+    HostScreen.tsx         Authenticated Host shell showing the live roster of joined Players and the Play button
     PlayerJoin.tsx         Player join form: Username + preset Avatar grid
-    WaitingRoom.tsx        Screen shown to a Player after a successful join
+    WaitingRoom.tsx        Screen shown to a Player after a successful join, before Play
+    Game.tsx               Screen shown to a Player once Play has been pressed (placeholder pending the Question round)
     socket.ts              Shared Socket.IO client connection
-    types.ts               Shared client-side types (e.g. Player)
+    useSocketEvent.ts      Hook subscribing a state setter to a Socket.IO event for the component's lifetime
+    types.ts               Shared client-side types (e.g. Player, GamePhase)
+    playerIdentity.ts      localStorage persistence of a Player's identity for reconnect
   public/                Static assets served as-is (favicon, icon sprite)
 server/                  Node.js + Express + TypeScript + Socket.IO backend
   src/
-    index.ts               Express app, static client serving, Socket.IO wiring, in-memory roster
+    index.ts               Express app, static client serving, Socket.IO wiring, in-memory roster and game phase
     roster.ts              Pure join-validation logic (unit tested)
     roster.test.ts         Vitest unit tests for roster.ts
+    game.ts                Pure game-phase transition and join-gating logic (unit tested)
+    game.test.ts           Vitest unit tests for game.ts
 skills/                  Claude Code skills used to build this project (not part of the shipped app)
 ```
 

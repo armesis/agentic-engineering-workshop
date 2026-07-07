@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
-import type { Player } from './types'
+import { useSocketEvent } from './useSocketEvent'
+import type { GamePhase, Player } from './types'
 
 function buildJoinUrl(host: string): string {
   const port = window.location.port ? `:${window.location.port}` : ''
@@ -10,20 +11,13 @@ function buildJoinUrl(host: string): string {
 
 function HostScreen() {
   const [roster, setRoster] = useState<Player[]>([])
+  const [gamePhase, setGamePhase] = useState<GamePhase>('waiting')
   // window.location.hostname may be "localhost", which other devices on the
   // network can't resolve; fetch the server's LAN address for the QR code instead.
   const [joinUrl, setJoinUrl] = useState(() => buildJoinUrl(window.location.hostname))
 
-  useEffect(() => {
-    function handleRosterUpdate(players: Player[]) {
-      setRoster(players)
-    }
-
-    socket.on('roster:update', handleRosterUpdate)
-    return () => {
-      socket.off('roster:update', handleRosterUpdate)
-    }
-  }, [])
+  useSocketEvent('roster:update', setRoster)
+  useSocketEvent('game:phase', setGamePhase)
 
   useEffect(() => {
     fetch('/api/network-info')
@@ -32,10 +26,14 @@ function HostScreen() {
       .catch(() => {})
   }, [])
 
+  function handlePlay() {
+    socket.emit('game:play')
+  }
+
   return (
     <section id="center">
       <h1>Host Screen</h1>
-      <QRCodeSVG value={joinUrl} size={200} title="Scan to join" />
+      {gamePhase === 'waiting' && <QRCodeSVG value={joinUrl} size={200} title="Scan to join" />}
       <p>{roster.length} Player{roster.length === 1 ? '' : 's'} joined</p>
       <ul className="roster">
         {roster.map((player) => (
@@ -45,6 +43,11 @@ function HostScreen() {
           </li>
         ))}
       </ul>
+      {gamePhase === 'waiting' ? (
+        <button onClick={handlePlay}>Play</button>
+      ) : (
+        <p>Game started</p>
+      )}
     </section>
   )
 }

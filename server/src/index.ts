@@ -6,6 +6,7 @@ import { createServer } from "node:http";
 import express from "express";
 import { Server } from "socket.io";
 import { joinRoster, reattachPlayer, type Player } from "./roster.js";
+import { canJoin, startGame, type GamePhase } from "./game.js";
 
 // A machine can have several non-internal IPv4 interfaces at once (VirtualBox
 // host-only adapters, Hyper-V/WSL virtual switches, VPNs, ...), and none of
@@ -64,10 +65,12 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 let roster: Player[] = [];
+let gamePhase: GamePhase = "waiting";
 
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
   socket.emit("roster:update", roster);
+  socket.emit("game:phase", gamePhase);
 
   socket.on(
     "player:join",
@@ -75,6 +78,11 @@ io.on("connection", (socket) => {
       candidate: { username: string; avatar: string },
       ack?: (result: ReturnType<typeof joinRoster>) => void,
     ) => {
+      const gate = canJoin(gamePhase);
+      if (!gate.ok) {
+        ack?.(gate);
+        return;
+      }
       const result = joinRoster(roster, { id: randomUUID(), ...candidate });
       if (result.ok) {
         roster = [...roster, result.player];
@@ -83,6 +91,14 @@ io.on("connection", (socket) => {
       ack?.(result);
     },
   );
+
+  socket.on("game:play", () => {
+    const result = startGame(gamePhase);
+    if (result.ok) {
+      gamePhase = result.phase;
+      io.emit("game:phase", gamePhase);
+    }
+  });
 
   socket.on(
     "player:rejoin",
