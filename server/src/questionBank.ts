@@ -9,7 +9,7 @@ export interface Question {
   multiplier: number;
 }
 
-export const DEFAULT_TIME_LIMIT_SECONDS = 20;
+export const DEFAULT_TIME_LIMIT_SECONDS = 5;
 export const DEFAULT_MULTIPLIER = 1;
 
 export interface HostQuestionView {

@@ -58,7 +58,7 @@ function getLanAddress(): Promise<string> {
 try {
   // Optional in production, where HOST_PASSWORD is expected to already be set in the environment.
   process.loadEnvFile();
-} catch {}
+} catch { }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.resolve(__dirname, "../../client/dist");
