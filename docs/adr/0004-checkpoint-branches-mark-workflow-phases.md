@@ -1,6 +1,10 @@
+---
+status: accepted
+---
+
 # Checkpoint branches mark workflow-phase milestones, not per-issue app state
 
-Status: supersedes ADR-0001
+Supersedes ADR-0001.
 
 ADR-0001 planned one `checkpoint-N` branch per completed issue (#2-#12), so a stuck pair could recover the exact client build stage they needed. In practice, this repo's checkpoint mechanic is being repurposed: the PRD's "Further Notes" frame the whole app as a single live-build pass of the taught workflow (grill → PRD → issues → implementation → test → commit & push), and the value of checkpoint branches for this repo's own purposes is showing that workflow's macro-stages, not recovering fine-grained client progress.
 

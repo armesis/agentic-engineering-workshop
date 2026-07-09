@@ -1,6 +1,8 @@
-# Checkpoint branches (not tags) for the teleport mechanic, generated via "Include all branches"
+---
+status: superseded by ADR-0004
+---
 
-Status: superseded by ADR-0004 (checkpoint branches now mark workflow-phase milestones, not one per completed issue)
+# Checkpoint branches (not tags) for the teleport mechanic, generated via "Include all branches"
 
 Stuck pairs need to jump to a fully working client at any build stage. We considered git tags in a cloned repo, but participants get their repo via GitHub's "Use this template" button, which does not preserve commit history or tags from the source — confirmed via GitHub's docs, even with "Include all branches" checked, every branch in a generated repo starts as an unrelated single-commit snapshot.
 

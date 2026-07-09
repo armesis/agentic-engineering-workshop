@@ -4,12 +4,7 @@ A Kahoot-style quiz app (`client/` + `server/`) built live during the workshop a
 
 ## Checkpoint branches
 
-This repo ships four `checkpoint-*` branches marking macro-phases of the workflow that built it (see [ADR-0004](docs/adr/0004-checkpoint-branches-mark-workflow-phases.md)):
-
-- `checkpoint-1-pre-grilling` — repo before any workshop-specific work
-- `checkpoint-2-post-grilling` — domain glossary and ADRs committed, PRD written
-- `checkpoint-3-issue-writing` — all issues filed on the tracker
-- `checkpoint-4-post-implementation` — final state, fully working app
+This repo ships four `checkpoint-*` branches marking macro-phases of the grill → PRD → issues → implementation workflow that built it — see [ADR-0004](docs/adr/0004-checkpoint-branches-mark-workflow-phases.md) for what each one contains and why.
 
 If you get stuck, recover a checkpoint with:
 
