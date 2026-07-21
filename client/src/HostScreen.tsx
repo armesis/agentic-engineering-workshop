@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
 import { useSocketEvent } from './useSocketEvent'
+import { remainingSeconds } from './countdown'
 import HostLeaderboard from './HostLeaderboard'
 import FinalResults from './FinalResults'
 import type {
@@ -16,11 +17,6 @@ import type {
 function buildJoinUrl(host: string): string {
   const port = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${host}${port}/?role=player`
-}
-
-function remainingSeconds(question: HostQuestionView): number {
-  const deadline = question.startedAtMs + question.timeLimitSeconds * 1000
-  return Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
 }
 
 function HostScreen() {
@@ -65,8 +61,9 @@ function HostScreen() {
 
   useEffect(() => {
     if (!currentQuestion) return
-    setCountdown(remainingSeconds(currentQuestion))
-    const interval = setInterval(() => setCountdown(remainingSeconds(currentQuestion)), 250)
+    const tick = () => setCountdown(remainingSeconds(currentQuestion.startedAtMs, currentQuestion.timeLimitSeconds))
+    tick()
+    const interval = setInterval(tick, 250)
     return () => clearInterval(interval)
   }, [currentQuestion])
 
@@ -74,19 +71,38 @@ function HostScreen() {
     socket.emit('game:play')
   }
 
+  const showLobbyCards = gamePhase === 'waiting' && roster.length <= 10
+
   return (
     <section id="center">
-      <h1>Host Screen</h1>
-      {gamePhase === 'waiting' && <QRCodeSVG value={joinUrl} size={200} title="Scan to join" />}
+      {gamePhase === 'waiting' && (
+        <div className="qr-frame">
+          <span className="qr-frame-label">Scan to join</span>
+          <div className="qr-frame-inner">
+            <QRCodeSVG value={joinUrl} size={320} title="Scan to join" />
+          </div>
+        </div>
+      )}
       <p>{roster.length} Player{roster.length === 1 ? '' : 's'} joined</p>
-      <ul className="roster">
-        {roster.map((player) => (
-          <li key={player.id}>
-            <span>{player.avatar}</span>
-            <span>{player.username}</span>
-          </li>
-        ))}
-      </ul>
+      {showLobbyCards ? (
+        <ul className="roster-lobby">
+          {roster.map((player) => (
+            <li key={player.id} className="lobby-card">
+              <span className="lobby-card-avatar">{player.avatar}</span>
+              <span className="lobby-card-username">{player.username}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className="roster">
+          {roster.map((player) => (
+            <li key={player.id}>
+              <span>{player.avatar}</span>
+              <span>{player.username}</span>
+            </li>
+          ))}
+        </ul>
+      )}
       {gamePhase === 'waiting' && <button onClick={handlePlay}>Play</button>}
       {(gamePhase === 'question' || gamePhase === 'reveal') && currentQuestion && (
         <div className="question-view">

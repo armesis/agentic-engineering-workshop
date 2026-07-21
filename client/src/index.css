@@ -1,25 +1,46 @@
+@font-face {
+  font-family: 'Anton';
+  src: url('./assets/fonts/Anton-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --text: rgba(255, 255, 255, 0.92);
+  --text-h: #ffffff;
+  --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --border: rgba(255, 255, 255, 0.28);
+  --accent: #ffd23f;
+  --accent-bg: rgba(255, 255, 255, 0.16);
+  --accent-border: rgba(255, 255, 255, 0.5);
+  --card-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
+
+  --gradient-ambient: linear-gradient(
+    135deg,
+    #ff2e93,
+    #7b2ff7,
+    #1e6fd9,
+    #29b6f6,
+    #ffd23f,
+    #ff8a00,
+    #ff2e93
+  );
+  --gradient-correct: linear-gradient(135deg, #1fbf5c, #29b6f6, #7b2ff7, #1fbf5c);
+  --gradient-incorrect: linear-gradient(135deg, #ff3b5c, #ff2e93, #7b2ff7, #ff3b5c);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+  --display: 'Anton', Impact, 'Arial Narrow Bold', sans-serif;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--text);
-  background: var(--bg);
+  background-image: var(--gradient-ambient);
+  background-size: 400% 400%;
+  animation: gradient-drift 18s ease infinite;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -30,23 +51,30 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+:root.gradient-correct {
+  background-image: var(--gradient-correct);
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+:root.gradient-incorrect {
+  background-image: var(--gradient-incorrect);
+}
+
+@keyframes gradient-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    animation: none;
+    background-position: 0% 50%;
   }
 }
 
@@ -71,6 +99,7 @@ h2 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
+  text-shadow: var(--text-shadow);
 }
 
 h1 {
@@ -93,19 +122,4 @@ h2 {
 }
 p {
   margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

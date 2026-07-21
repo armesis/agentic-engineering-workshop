@@ -70,7 +70,7 @@ The action the Host takes once to start the Game, transitioning every connected 
 The sequence of multiple-choice Questions presented to all Players after Play is pressed. Runs fully automatically end-to-end (no Host pacing/intervention) until Final Results.
 
 **Question**:
-One multiple-choice round: 4 shape/color-coded options, a per-question time limit, and a point multiplier, sourced from the Question Bank. The question text and countdown render only on the Host Screen; Players see only the 4 answer buttons (no text, no countdown) and lock in their answer on first tap.
+One multiple-choice round: 4 shape/color-coded options, a per-question time limit, and a point multiplier, sourced from the Question Bank. The question text and options render only on the Host Screen. Players receive only the time limit and start time (never the question text, options, or correct answer), see just the 4 answer buttons, and lock in their answer on first tap; once locked in, the buttons are replaced by a countdown of the remaining time.
 
 **Reveal**:
 The phase immediately after a Question's timer expires: the correct answer is highlighted on the Host Screen, and each Player's device shows whether they personally got it right and their points earned. Lasts a fixed 5 seconds.

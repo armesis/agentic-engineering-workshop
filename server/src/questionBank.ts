@@ -38,6 +38,17 @@ export function toHostRevealView(question: Question): HostRevealView {
   return { correctOption: question.correctOption };
 }
 
+export interface QuestionTimingView {
+  timeLimitSeconds: number;
+  startedAtMs: number;
+}
+
+// Sent to Players (unlike HostQuestionView, which is Host-only): timing to
+// drive a countdown, but never the question text, options, or correct answer.
+export function toQuestionTimingView(question: Question, startedAtMs: number): QuestionTimingView {
+  return { timeLimitSeconds: question.timeLimitSeconds, startedAtMs };
+}
+
 // Fixed schema, one header row: question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier
 export function parseQuestionBank(csv: string): Question[] {
   const lines = csv

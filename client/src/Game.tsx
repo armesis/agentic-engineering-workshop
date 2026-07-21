@@ -4,14 +4,15 @@ import Reveal from './Reveal'
 import Leaderboard from './Leaderboard'
 import FinalResults from './FinalResults'
 import { useSocketEvent } from './useSocketEvent'
-import type { GamePhase, LeaderboardEntry, Player, PlayerRevealResult } from './types'
+import type { GamePhase, LeaderboardEntry, Player, PlayerRevealResult, QuestionTimingView } from './types'
 
 interface GameProps {
   player: Player
   gamePhase: GamePhase
+  questionTiming: QuestionTimingView | null
 }
 
-function Game({ player, gamePhase }: GameProps) {
+function Game({ player, gamePhase, questionTiming }: GameProps) {
   // Registered as soon as the Game mounts (i.e. once the Question phase
   // begins), so it's already listening well before the server later emits
   // these on entering Reveal/Leaderboard - no race with those phases' renders below.
@@ -23,7 +24,7 @@ function Game({ player, gamePhase }: GameProps) {
   useSocketEvent('final-results:show', setFinalStandings)
 
   if (gamePhase === 'question') {
-    return <QuestionRound player={player} />
+    return <QuestionRound player={player} timing={questionTiming} />
   }
 
   if (gamePhase === 'reveal') {

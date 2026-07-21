@@ -36,13 +36,16 @@ function PlayerJoin({ onSuccess }: PlayerJoinProps) {
     <section id="center">
       <h1>Join the Game</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          placeholder="Username"
-          autoFocus
-        />
+        <div className="username-field">
+          <input
+            type="text"
+            className="username-input"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            placeholder="Username"
+            autoFocus
+          />
+        </div>
         <div className="avatar-grid" role="radiogroup" aria-label="Avatar">
           {AVATARS.map((option) => (
             <button

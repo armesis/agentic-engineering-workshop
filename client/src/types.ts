@@ -25,6 +25,11 @@ export interface HostRevealView {
   correctOption: AnswerOption
 }
 
+export interface QuestionTimingView {
+  timeLimitSeconds: number
+  startedAtMs: number
+}
+
 export interface PlayerRevealResult {
   correct: boolean
   pointsEarned: number

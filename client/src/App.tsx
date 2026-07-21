@@ -6,7 +6,7 @@ import WaitingRoom from './WaitingRoom'
 import Game from './Game'
 import { socket } from './socket'
 import { clearPlayerIdentity, loadPlayerIdentity } from './playerIdentity'
-import type { GamePhase, Player, RejoinResult } from './types'
+import type { GamePhase, Player, QuestionTimingView, RejoinResult } from './types'
 import './App.css'
 
 const isPlayer = new URLSearchParams(window.location.search).get('role') === 'player'
@@ -33,6 +33,7 @@ function PlayerApp() {
   // over the wire — until it does, we don't yet know whether to show the join
   // form or "Game already started", so render nothing rather than guess wrong.
   const [checkingGamePhase, setCheckingGamePhase] = useState(true)
+  const [questionTiming, setQuestionTiming] = useState<QuestionTimingView | null>(null)
 
   useEffect(() => {
     function handleGamePhase(phase: GamePhase) {
@@ -40,9 +41,15 @@ function PlayerApp() {
       setCheckingGamePhase(false)
     }
 
+    // Subscribed here (always-mounted), not inside QuestionRound: the server
+    // emits question:timing in the same tick as the game:phase change that
+    // would mount QuestionRound, so a listener registered on mount would
+    // reliably miss that first emission.
     socket.on('game:phase', handleGamePhase)
+    socket.on('question:timing', setQuestionTiming)
     return () => {
       socket.off('game:phase', handleGamePhase)
+      socket.off('question:timing', setQuestionTiming)
     }
   }, [])
 
@@ -69,7 +76,7 @@ function PlayerApp() {
     return gamePhase === 'waiting' ? (
       <WaitingRoom player={player} />
     ) : (
-      <Game player={player} gamePhase={gamePhase} />
+      <Game player={player} gamePhase={gamePhase} questionTiming={questionTiming} />
     )
   }
 

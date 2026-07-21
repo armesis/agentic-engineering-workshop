@@ -4,6 +4,7 @@ import {
   DEFAULT_TIME_LIMIT_SECONDS,
   parseQuestionBank,
   toHostQuestionView,
+  toQuestionTimingView,
   type Question,
 } from "./questionBank.js";
 
@@ -85,5 +86,32 @@ describe("toHostQuestionView", () => {
 
   it("never includes the correct answer", () => {
     expect(toHostQuestionView(question, 1_000)).not.toHaveProperty("correctOption");
+  });
+});
+
+describe("toQuestionTimingView", () => {
+  const question: Question = {
+    question: "What is 2+2?",
+    optionA: "3",
+    optionB: "4",
+    optionC: "5",
+    optionD: "6",
+    correctOption: "B",
+    timeLimitSeconds: 15,
+    multiplier: 2,
+  };
+
+  it("carries only the time limit and start time", () => {
+    expect(toQuestionTimingView(question, 1_000)).toEqual({
+      timeLimitSeconds: 15,
+      startedAtMs: 1_000,
+    });
+  });
+
+  it("never includes question text, options, or the correct answer", () => {
+    const view = toQuestionTimingView(question, 1_000);
+    expect(view).not.toHaveProperty("question");
+    expect(view).not.toHaveProperty("optionA");
+    expect(view).not.toHaveProperty("correctOption");
   });
 });

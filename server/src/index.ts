@@ -22,6 +22,7 @@ import {
   parseQuestionBank,
   toHostQuestionView,
   toHostRevealView,
+  toQuestionTimingView,
   type Question,
 } from "./questionBank.js";
 import {
@@ -118,6 +119,9 @@ function beginQuestion(index: number) {
   io.emit("game:phase", gamePhase);
   if (currentQuestion) {
     io.to(HOST_ROOM).emit("question:show", toHostQuestionView(currentQuestion, questionStartedAtMs));
+    // Timing only (never question text/options/correct answer) so every
+    // Player can drive their own post-answer countdown, synced to this clock.
+    io.emit("question:timing", toQuestionTimingView(currentQuestion, questionStartedAtMs));
     setTimeout(revealQuestion, currentQuestion.timeLimitSeconds * 1000 + GRACE_WINDOW_MS);
   }
 }
@@ -191,11 +195,19 @@ io.on("connection", (socket) => {
   if (gamePhase === "final-results") {
     socket.emit("final-results:show", buildLeaderboard(roster));
   }
+  if (gamePhase === "question" && currentQuestion) {
+    socket.emit("question:timing", toQuestionTimingView(currentQuestion, questionStartedAtMs));
+  }
 
   // Only the Host Screen shows question text, options, and a countdown -
   // Players never receive Question content at all, only the phase change.
   socket.on("host:connect", () => {
     socket.join(HOST_ROOM);
+    // The Host Screen only mounts (and registers its listeners) after the
+    // password-login step, well after this socket connected - the roster:update
+    // sent from the "connection" handler above is long gone by then. Resend it
+    // here since host:connect fires only after those listeners are attached.
+    socket.emit("roster:update", roster);
     if (currentQuestion) {
       socket.emit("question:show", toHostQuestionView(currentQuestion, questionStartedAtMs));
     }
