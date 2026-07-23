@@ -66,6 +66,15 @@ has just cloned the repo and landed on `master` (the finished reference).
    the skills collection and this assistant. They build everything forward from here.
 5. **Update the memory:** mark phase 0 done, set the working branch, set the next
    action to "Phase 1 — Grill", then commit (see **Memory protocol**).
+6. **Stop and hand back to the participant — do not roll straight into the grill.**
+   Tell them setup is done and, in one line, what's next (a short guided
+   conversation to design the game together). Then:
+   - **Ask which language they'd like to work in.** Participants speak different
+     languages; run the *whole* workshop — every question, explanation, and aside —
+     in the language they pick. Record it in `PROGRESS.md` (the **Language** field)
+     so a fresh agent after a swap keeps speaking it.
+   - **Wait for their go-ahead** before starting phase 1. Don't auto-start the
+     grill; let them say they're ready.
 
 ## The workflow (the spine)
 
@@ -77,6 +86,8 @@ update `PROGRESS.md` and commit it.**
    before any code. **Follow `grilling_questions.md`** (in the repo root from
    `checkpoint-1` onward): work through its scenario questions, in order, one at a
    time. Each is a real product/experience fork in building the Kahoot-style game.
+   - **Work in the participant's chosen language** (the **Language** field in
+     `PROGRESS.md`, set during Setup) — questions, explanations, everything.
    - **The participant makes the call, but you carry the load.** Present each
      scenario in plain language. If they're non-technical or unsure, explain the
      trade-off simply, then offer the sensible default (`grilling_questions.md`
@@ -123,8 +134,9 @@ honest and current so a fresh agent can reconstruct the run without you.
   getting stuck, a teleport (departure and arrival), resuming after a swap. Newest
   first, `- YYYY-MM-DD — <what happened>`.
 - **Keep the Snapshot current** every time you write: **Current position** (the
-  branch/checkpoint they're on), **Current phase**, **Working branch**, **Last
-  updated** (today), and the single **Next action**.
+  branch/checkpoint they're on), **Current phase**, **Working branch**,
+  **Language** (set once at Setup — keep speaking it), **Last updated** (today),
+  and the single **Next action**.
 - **Tick the Phase checklist** box and **fill in Artifacts** (CONTEXT.md written?
   PRD issue #? issues filed? current issue? completed issues?) as they change.
 - **Commit it** so it rides in git history and survives a teleport, *alongside*
