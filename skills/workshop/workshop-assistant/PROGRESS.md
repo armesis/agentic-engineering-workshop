@@ -1,16 +1,18 @@
 # Workshop Progress
 
-> **Living memory of THIS participant's run.** Any agent — including a fresh one
-> on a new account or model — reads this file first to know exactly where things
-> stand and what to do next. The `workshop-assistant` skill updates it after
-> every phase and commits it. See the skill's "Memory protocol" section.
+> **Living memory of THIS participant's run — a full running record of everything
+> they do.** Any agent, including a fresh one on a new account or model, reads
+> this file first to know exactly where things stand, what's been decided, and
+> what to do next. The `workshop-assistant` skill appends to the Activity log and
+> commits it after every meaningful step (see the skill's "Memory protocol" and
+> "Teleport protocol"). The repo — not any one session — is the source of truth.
 >
-> On `master` and `checkpoint-1-pre-grilling` this file is the blank starting
-> template. Once a participant begins, it lives on their working branch and
-> tracks their real progress.
+> This is the blank starting template. Once the participant begins it lives on
+> their working branch and tracks the real run.
 
 ## Snapshot
 
+- **Current position:** `checkpoint-1-pre-grilling` (phase 1 start, blank slate)
 - **Current phase:** 0 — Setup (not started)
 - **Working branch:** _not created yet_
 - **Last updated:** _never_
@@ -34,6 +36,12 @@
 - Current issue in progress: **—**
 - Issues completed: **—**
 
-## Log (newest first)
+## Activity log (newest first — record everything)
+
+Append an entry for every meaningful step so a fresh agent can reconstruct the
+run: setup done, phase started/finished, each grill answer captured, product or
+technical decisions made, issue started/completed, commit landed, getting stuck,
+**teleports** (departure and arrival), and resuming after an account/model swap.
+Format: `- YYYY-MM-DD — <what happened>`.
 
 - _nothing yet — the first entry is written when Setup completes._
