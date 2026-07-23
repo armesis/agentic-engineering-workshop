@@ -105,23 +105,26 @@ Loop 4→5→6 per issue until the PRD is satisfied.
 
 ## Memory protocol
 
-`PROGRESS.md` is how the workshop survives an account/model swap. Keep it honest
-and current so a fresh agent can resume without you.
+`PROGRESS.md` is a **full running record of everything the participant does** —
+it's how the workshop survives an account/model swap or a teleport. Keep it
+honest and current so a fresh agent can reconstruct the run without you.
 
-- **After every phase** (and after Setup), update `PROGRESS.md`:
-  - set **Current phase** and **Next action** in the Snapshot,
-  - tick the **Phase checklist** box,
-  - fill in **Artifacts** (CONTEXT.md written? PRD issue #? issues filed? current
-    issue? completed issues?),
-  - prepend a one-line **Log** entry (newest first) with what just happened.
-  - set **Last updated** to today.
-- **Commit it** so it rides in git history and survives a teleport:
+- **Append an Activity-log entry for every meaningful step**, not just phase
+  boundaries: setup done, phase started/finished, each grill answer captured, a
+  product or technical decision made, an issue started/completed, a commit landed,
+  getting stuck, a teleport (departure and arrival), resuming after a swap. Newest
+  first, `- YYYY-MM-DD — <what happened>`.
+- **Keep the Snapshot current** every time you write: **Current position** (the
+  branch/checkpoint they're on), **Current phase**, **Working branch**, **Last
+  updated** (today), and the single **Next action**.
+- **Tick the Phase checklist** box and **fill in Artifacts** (CONTEXT.md written?
+  PRD issue #? issues filed? current issue? completed issues?) as they change.
+- **Commit it** so it rides in git history and survives a teleport, *alongside*
+  the participant's actual work for that step — not as a separate ceremony:
   ```bash
   git add skills/workshop/workshop-assistant/PROGRESS.md
-  git commit -m "workshop: <phase> done — next: <next action>"
+  git commit -m "workshop: <what happened> — next: <next action>"
   ```
-- Commit the memory *alongside* the participant's actual work for that phase, not
-  as a separate ceremony they have to remember.
 
 ## When a participant is stuck
 
@@ -139,17 +142,47 @@ Every branch carries this skill, the progress memory, and the `AGENTS.md` /
 predate the client/server scaffold and exist to show the process, not to recover
 build progress.
 
-To teleport a stuck participant to a known-good state:
+## Teleport protocol (recovering to a checkpoint)
 
-```bash
-git checkout -f checkpoint-4-post-implementation
-```
+A teleport is a **hard reset to a known-good branch**. It abandons the
+participant's stuck *code*, but their *memory* — the record of everything they've
+done — must survive the jump and land on the branch they arrive at. **Never run a
+bare `git checkout -f <dest>`**: the destination's own `PROGRESS.md` would
+overwrite theirs and erase the run's history. The agent always does the teleport
+for them, carrying the memory across.
 
-`-f` discards their local changes — that's intended, they're already stuck.
-Before running it, make sure they actually want to abandon their current attempt;
-recovering is a reset, not a merge. Prefer helping them unstick in place first,
-and treat the teleport as the escape hatch. After a teleport, re-read
-`PROGRESS.md` to re-orient.
+When a stuck participant asks to teleport to `<dest>` (usually
+`checkpoint-4-post-implementation`, the only runnable one):
+
+1. **Confirm** they want to abandon the current attempt — a teleport is a reset,
+   not a merge. Try to unstick them in place first.
+2. **Record the departure** in `PROGRESS.md` on their current branch: append an
+   Activity-log entry (`STUCK at <where/why> — teleporting to <dest>`), then
+   commit so their journey is preserved on their working branch:
+   ```bash
+   git add skills/workshop/workshop-assistant/PROGRESS.md
+   git commit -m "workshop: stuck at <phase> — teleporting to <dest>"
+   ```
+3. **Jump, carrying the memory across** — overlay their `PROGRESS.md` onto the
+   destination so the `-f` reset can't erase it:
+   ```bash
+   git checkout -f <dest>
+   git checkout <their-branch> -- skills/workshop/workshop-assistant/PROGRESS.md
+   ```
+4. **Record the arrival** in `PROGRESS.md`: set **Current position** to `<dest>`,
+   append an Activity-log entry (`ARRIVED at <dest> via teleport from
+   <their-branch> — <dest> is now the working position`), update **Next action**,
+   then commit it onto `<dest>`:
+   ```bash
+   git add skills/workshop/workshop-assistant/PROGRESS.md
+   git commit -m "workshop: arrived at <dest> via teleport — position is now <dest>"
+   ```
+5. **Re-orient** from the freshly updated `PROGRESS.md` and carry on. If they'll
+   keep building from here, branch off first (`git switch -c <new-branch>`) so the
+   checkpoint stays clean.
+
+Prefer helping them unstick in place before offering the teleport — treat it as
+the escape hatch, not the first move.
 
 ## How to behave as the assistant
 
