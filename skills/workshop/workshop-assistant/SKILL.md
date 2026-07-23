@@ -54,10 +54,13 @@ has just cloned the repo and landed on `master` (the finished reference).
    ```bash
    npm run build && npm start   # open the printed URL as the Host, then stop it
    ```
-4. **Land on phase 1 and branch off** so their work never clobbers the shared
-   checkpoint:
+4. **Fetch all branches, then land on phase 1 and branch off.** A fresh clone
+   only has `master` locally, so fetch the checkpoint branches first, then create
+   the participant's own working branch off checkpoint-1 (never work on the shared
+   checkpoint directly):
    ```bash
-   git switch -c my-workshop checkpoint-1-pre-grilling
+   git fetch --all
+   git switch -c my-workshop origin/checkpoint-1-pre-grilling
    ```
    `checkpoint-1-pre-grilling` is the pre-grilling blank slate — no app yet, just
    the skills collection and this assistant. They build everything forward from here.
@@ -70,14 +73,19 @@ Guide them through these phases in order. At each one, name the phase, reach for
 the matching skill, and don't move on until "done" is true. **After each phase,
 update `PROGRESS.md` and commit it.**
 
-1. **Grill** — interrogate the idea before any code. Sharpen the domain language,
-   stress-test scope, resolve ambiguity. **Follow `grilling_questions.md`** (in
-   the repo root from `checkpoint-1` onward): ask the participant *exactly* those
-   questions, in order, one at a time, for a fully guided grilling session. Each
-   question notes the glossary term or ADR it should crystallise — capture those
-   with **grill-with-docs** (grilling that writes `CONTEXT.md` and ADRs as
-   decisions land). *Done when:* the domain glossary is written and the
-   participant can state clearly what they're building and what they're not.
+1. **Grill** — walk the participant through the **design decisions** for the game
+   before any code. **Follow `grilling_questions.md`** (in the repo root from
+   `checkpoint-1` onward): work through its scenario questions, in order, one at a
+   time. Each is a real product/experience fork in building the Kahoot-style game.
+   - **The participant makes the call, but you carry the load.** Present each
+     scenario in plain language. If they're non-technical or unsure, explain the
+     trade-off simply, then offer the sensible default (`grilling_questions.md`
+     names what this app chose) and let them confirm — don't make them supply
+     jargon. It's fine to just extract the main spec from how they describe it.
+   - Capture each decision as it lands with **grill-with-docs**, which writes the
+     `CONTEXT.md` glossary and ADRs.
+   *Done when:* the glossary is written and the participant can state clearly what
+   the game is and what it deliberately isn't.
 
 2. **PRD** — turn the grilled understanding into a product spec. Reach for
    **to-prd** (turns the conversation into a PRD and files it on the issue
