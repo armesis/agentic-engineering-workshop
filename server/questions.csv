@@ -1,9 +1,11 @@
 question,option_a,option_b,option_c,option_d,correct_option,time_limit_seconds,multiplier
-What does "LLM" stand for?,Large Language Model,Long Loop Method,Live Logic Machine,Linked List Model,A,5,1
-Which company created Claude?,OpenAI,Anthropic,Google,Meta,B,5,1
-In a Kahoot-style quiz what determines your score on a correct answer?,Only accuracy,Only speed,Speed and accuracy,A coin flip,C,5,1
-What HTTP library does this server use?,Koa,Fastify,Express,Hapi,C,5,1
-Which protocol powers the real-time roster updates in this app?,REST polling,WebSockets via Socket.IO,Server-Sent Events,GraphQL subscriptions,B,5,1
-When left blank in the Question Bank CSV which field defaults to 1?,time_limit_seconds,multiplier,correct_option,question,B,5,2
-What does "PRD" stand for?,Product Requirements Document,Peer Review Draft,Project Roadmap Document,Programmatic Response Design,A,5,1
-Does the Question Bank reload automatically when the CSV file changes?,Yes always,Yes but only for the Host,No a server restart is required,No unless a file-watcher is enabled,C,5,3
+What does the word "Nowruz" literally translate to in Persian?,New Day,New Year,New Light,New Dawn,A,10,1
+Nowruz begins on which astronomical event marking the start of spring?,Summer solstice,Vernal equinox,Winter solstice,Autumnal equinox,B,10,1
+How many symbolic items beginning with the letter S traditionally appear on Iran's Haft-Sin table?,Five,Six,Seven,Eight,C,10,1
+Which Haft-Sin item is sprouted wheat or lentil grass symbolizing rebirth?,Senjed,Sabzeh,Somaq,Serkeh,B,10,2
+What syrup-soaked mix of seven dried fruits and nuts is prepared for Nowruz in Afghanistan instead of a Haft-Sin table?,Haft Mewa,Ajil,Halva,Baklava,A,10,2
+Which Afghan city hosts the Nowruz Red Flower Guli Surkh festival and the Jahenda Bala flag-raising ceremony?,Kabul,Herat,Kandahar,Mazar-i-Sharif,D,10,2
+What is the name of the ancient Persian fire-jumping festival held on the eve of the last Wednesday before Nowruz?,Yalda,Chaharshanbe Suri,Mehregan,Tirgan,B,10,2
+Which sweet wheat-based pudding is cooked overnight by groups of women for Nowruz called Samanu in Iran and Samanak in Afghanistan?,Sholezard,Samanu,Faloodeh,Zoolbia,B,10,2
+On what calendar date is International Nowruz Day observed each year as recognized by the United Nations?,March 21,April 1,February 21,March 1,A,10,1
+In which year did the United Nations General Assembly officially proclaim the International Day of Nowruz?,2005,2010,2015,2020,B,10,3

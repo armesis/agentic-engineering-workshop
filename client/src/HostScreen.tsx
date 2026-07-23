@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { socket } from './socket'
 import { useSocketEvent } from './useSocketEvent'
 import { remainingSeconds } from './countdown'
+import { ANSWER_SHAPES } from './answerShapes'
 import HostLeaderboard from './HostLeaderboard'
 import FinalResults from './FinalResults'
 import type {
@@ -116,11 +117,28 @@ function HostScreen() {
                 ['C', currentQuestion.optionC],
                 ['D', currentQuestion.optionD],
               ] as [AnswerOption, string][]
-            ).map(([optionLetter, text]) => (
-              <li key={optionLetter} className={revealView?.correctOption === optionLetter ? 'correct' : undefined}>
-                {text}
-              </li>
-            ))}
+            ).map(([optionLetter, text]) => {
+              const isCorrect = revealView?.correctOption === optionLetter
+              const isRevealed = revealView !== null
+              return (
+                <li
+                  key={optionLetter}
+                  className={[
+                    'question-option',
+                    `answer-option-${optionLetter.toLowerCase()}`,
+                    isCorrect ? 'correct' : undefined,
+                    isRevealed && !isCorrect ? 'faded' : undefined,
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <span className="question-option-glyph" aria-hidden="true">
+                    {ANSWER_SHAPES[optionLetter].glyph}
+                  </span>
+                  <span>{text}</span>
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

@@ -102,7 +102,6 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   width: 100%;
-  max-width: 400px;
 }
 
 .answer-option {
@@ -195,22 +194,42 @@ button {
 .question-options {
   list-style: none;
   padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.question-option {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 10px;
+  min-height: 140px;
+  padding: 20px;
+  border-radius: 16px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.45);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 
-  li {
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: var(--accent-bg);
-    color: var(--text-h);
-
-    &.correct {
-      background: #26890c;
-      color: white;
-    }
+  &.correct {
+    box-shadow: 0 0 0 3px white, 0 10px 24px -4px rgba(0, 0, 0, 0.5);
+    transform: scale(1.03);
   }
+
+  &.faded {
+    opacity: 0.35;
+  }
+}
+
+.question-option-glyph {
+  font-size: 32px;
+  line-height: 1;
 }
 
 .reveal-correct {
@@ -549,7 +568,7 @@ button {
   place-items: center;
   flex-grow: 1;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1920px) {
     padding: 32px 20px 24px;
     gap: 18px;
   }
