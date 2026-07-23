@@ -15,6 +15,7 @@
 - **Current position:** `checkpoint-1-pre-grilling` (phase 1 start, blank slate)
 - **Current phase:** 0 — Setup (not started)
 - **Working branch:** _not created yet_
+- **Language:** _not set yet — ask the participant during Setup, then keep speaking it_
 - **Last updated:** _never_
 - **Next action:** Run the **Setup** section of the workshop-assistant skill.
 

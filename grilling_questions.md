@@ -8,6 +8,9 @@ interesting work is the product and experience calls, not the technology.
 
 ## How to run it
 
+- **In the participant's language.** By now Setup has asked which language they
+  want (recorded in `PROGRESS.md`); run the whole grill — scenarios, explanations,
+  everything — in it.
 - **One question at a time, in order.** Each is a real fork in how the game plays.
   Pose it as the little scenario written below, in plain language — a story about
   the room, not a spec sheet.
