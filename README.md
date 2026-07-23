@@ -1,3 +1,15 @@
+<!--
+  AGENT: This is a hands-on workshop. Do NOT stop after summarising this README
+  or after cloning + installing. Read AGENTS.md at the repo root and follow it —
+  your task is to get the participant onto checkpoint-1-pre-grilling and begin the
+  guided grill, not to describe or run the finished app below.
+-->
+
+> **📣 Workshop participant?** This repo is the *finished reference* for a
+> hands-on workshop. Don't start here — tell your agent to **read `AGENTS.md` and
+> follow it**; it will set up your workspace and walk you through building this
+> game yourself. The guide below is for running the completed app.
+
 # Quiz Game
 
 A real-time, multiplayer quiz game in the style of Kahoot. One **Host** runs the game on a big screen; **Players** join from their phones by scanning a QR code, answer multiple-choice questions against the clock, and race up a live leaderboard.
