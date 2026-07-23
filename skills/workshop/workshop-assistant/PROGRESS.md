@@ -4,17 +4,21 @@
 > participant run.** The full app is already built here. **Do not start the
 > workshop on this branch.** Follow the workshop-assistant **Setup** section: it
 > lands the participant on `checkpoint-1-pre-grilling` (phase 1, blank slate) on
-> their own working branch, where a fresh copy of this file tracks their real
-> progress.
+> their own working branch, where a fresh copy of this file becomes their living
+> memory.
 >
-> This file is the participant's living memory. Any agent — including a fresh one
-> on a new account or model — reads it first to know exactly where things stand.
-> On the participant's working branch the `workshop-assistant` skill updates it
-> after every phase and commits it (see the skill's "Memory protocol").
+> That memory is a **full running record of everything the participant does** —
+> phases, decisions, commits, stuck moments, and teleports. Any agent, including
+> a fresh one on a new account or model, reads it first to know exactly where
+> things stand and what to do next. The `workshop-assistant` skill appends to the
+> Activity log and commits it after every meaningful step (see the skill's
+> "Memory protocol" and "Teleport protocol"). The repo — not any one session — is
+> the source of truth.
 
 ## Snapshot
 
-- **Current phase:** — (on reference branch; participant run not started)
+- **Current position:** `master` (reference branch — not a participant run)
+- **Current phase:** — (participant run not started)
 - **Working branch:** _not created yet — you're on `master`_
 - **Last updated:** _never_
 - **Next action:** Run the **Setup** section of the workshop-assistant skill to
@@ -38,6 +42,12 @@
 - Current issue in progress: **—**
 - Issues completed: **—**
 
-## Log (newest first)
+## Activity log (newest first — record everything)
+
+Append an entry for every meaningful step so a fresh agent can reconstruct the
+run: setup done, phase started/finished, each grill answer captured, product or
+technical decisions made, issue started/completed, commit landed, getting stuck,
+**teleports** (departure and arrival), and resuming after an account/model swap.
+Format: `- YYYY-MM-DD — <what happened>`.
 
 - _nothing yet — the first entry is written when Setup completes._
