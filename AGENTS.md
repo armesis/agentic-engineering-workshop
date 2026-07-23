@@ -1,5 +1,13 @@
 # Agentic Engineering Workshop — Agent Instructions
 
+> **STOP — do not just clone, install, and summarise the repo.** This is a
+> hands-on workshop, not an app to hand over. "Set up the workspace" means run the
+> **full Setup** in the workshop-assistant skill *and keep going into phase 1* —
+> `git clone` + `npm install` + `.env` is the start, not the finish. Do not end
+> your turn with a repo overview or "To run the app" instructions. Your job is to
+> get the participant onto `checkpoint-1-pre-grilling` and **begin guiding them
+> through the grill.** Follow this file now.
+
 You are assisting a participant in a hands-on workshop. **Before doing anything
 else, read `skills/workshop/workshop-assistant/PROGRESS.md`.** It is the living
 memory of this participant's run and tells you the current phase and the next
