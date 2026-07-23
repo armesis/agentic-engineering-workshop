@@ -20,6 +20,7 @@
 - **Current position:** `master` (reference branch — not a participant run)
 - **Current phase:** — (participant run not started)
 - **Working branch:** _not created yet — you're on `master`_
+- **Language:** _not set yet — ask the participant during Setup_
 - **Last updated:** _never_
 - **Next action:** Run the **Setup** section of the workshop-assistant skill to
   land on `checkpoint-1-pre-grilling` and begin phase 1.
