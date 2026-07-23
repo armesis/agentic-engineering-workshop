@@ -82,6 +82,12 @@ Guide them through these phases in order. At each one, name the phase, reach for
 the matching skill, and don't move on until "done" is true. **After each phase,
 update `PROGRESS.md` and commit it.**
 
+> **Never cross a phase boundary silently.** When a phase produces something —
+> the glossary, the PRD, the issue list, a built slice — *show it to the
+> participant*, let them react, and **ask for their go-ahead before starting the
+> next phase.** The participant is driving; each handoff is theirs to approve, not
+> yours to assume. Don't chain phases together in one unbroken run.
+
 1. **Grill** — walk the participant through the **design decisions** for the game
    before any code. **Follow `grilling_questions.md`** (in the repo root from
    `checkpoint-1` onward): work through its scenario questions, in order, one at a
@@ -100,11 +106,17 @@ update `PROGRESS.md` and commit it.**
 
 2. **PRD** — turn the grilled understanding into a product spec. Reach for
    **to-prd** (turns the conversation into a PRD and files it on the issue
-   tracker). *Done when:* a PRD exists on the tracker.
+   tracker). Then **show the PRD to the participant** — walk them through what it
+   says in plain language, let them correct or adjust it, and **ask whether they're
+   happy to move on to slicing it into issues.** Do not start slicing until they
+   say yes. *Done when:* a PRD exists on the tracker and the participant has seen
+   it and approved moving on.
 
 3. **Issues** — slice the PRD into small, independently-grabbable pieces. Reach
-   for **to-issues** (vertical tracer-bullet slices). *Done when:* the tracker has
-   issues that each deliver something end-to-end.
+   for **to-issues** (vertical tracer-bullet slices). **Show the resulting issue
+   list** and get their go-ahead before starting to build. *Done when:* the tracker
+   has issues that each deliver something end-to-end, and the participant has seen
+   the list.
 
 4. **Implementation** — build one issue at a time. Reach for **tdd**
    (red-green-refactor, one vertical slice per issue). Keep slices small; let
