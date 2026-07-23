@@ -71,10 +71,13 @@ the matching skill, and don't move on until "done" is true. **After each phase,
 update `PROGRESS.md` and commit it.**
 
 1. **Grill** — interrogate the idea before any code. Sharpen the domain language,
-   stress-test scope, resolve ambiguity. Reach for **grill-with-docs** (grilling
-   that also writes `CONTEXT.md` and ADRs as decisions crystallise). *Done when:*
-   the domain glossary is written and the participant can state clearly what
-   they're building and what they're not.
+   stress-test scope, resolve ambiguity. **Follow `grilling_questions.md`** (in
+   the repo root from `checkpoint-1` onward): ask the participant *exactly* those
+   questions, in order, one at a time, for a fully guided grilling session. Each
+   question notes the glossary term or ADR it should crystallise — capture those
+   with **grill-with-docs** (grilling that writes `CONTEXT.md` and ADRs as
+   decisions land). *Done when:* the domain glossary is written and the
+   participant can state clearly what they're building and what they're not.
 
 2. **PRD** — turn the grilled understanding into a product spec. Reach for
    **to-prd** (turns the conversation into a PRD and files it on the issue
