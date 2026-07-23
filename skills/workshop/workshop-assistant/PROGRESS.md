@@ -1,20 +1,24 @@
 # Workshop Progress
 
-> **Living memory of THIS participant's run.** Any agent — including a fresh one
-> on a new account or model — reads this file first to know exactly where things
-> stand and what to do next. The `workshop-assistant` skill updates it after
-> every phase and commits it. See the skill's "Memory protocol" section.
+> **You are on `master` — the finished reference implementation, not a
+> participant run.** The full app is already built here. **Do not start the
+> workshop on this branch.** Follow the workshop-assistant **Setup** section: it
+> lands the participant on `checkpoint-1-pre-grilling` (phase 1, blank slate) on
+> their own working branch, where a fresh copy of this file tracks their real
+> progress.
 >
-> On `master` and `checkpoint-1-pre-grilling` this file is the blank starting
-> template. Once a participant begins, it lives on their working branch and
-> tracks their real progress.
+> This file is the participant's living memory. Any agent — including a fresh one
+> on a new account or model — reads it first to know exactly where things stand.
+> On the participant's working branch the `workshop-assistant` skill updates it
+> after every phase and commits it (see the skill's "Memory protocol").
 
 ## Snapshot
 
-- **Current phase:** 0 — Setup (not started)
-- **Working branch:** _not created yet_
+- **Current phase:** — (on reference branch; participant run not started)
+- **Working branch:** _not created yet — you're on `master`_
 - **Last updated:** _never_
-- **Next action:** Run the **Setup** section of the workshop-assistant skill.
+- **Next action:** Run the **Setup** section of the workshop-assistant skill to
+  land on `checkpoint-1-pre-grilling` and begin phase 1.
 
 ## Phase checklist
 
